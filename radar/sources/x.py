@@ -65,10 +65,13 @@ def fetch_x(cfg: dict, conn=None) -> list[dict]:
     include_replies = bool(xc.get("include_replies", False))
     drop_retweets = bool(xc.get("drop_retweets", True))
 
-    # 节流：距上次 X 拉取不足 min_interval_minutes 就整源跳过（控成本）
+    # 节流：距上次 X 拉取不足 min_interval_minutes 就整源跳过（控成本）。
+    # 注意：节流戳 last_x_run 改到循环【之后】、且仅当确有 API 调用成功(calls>0)才写——
+    # 整轮失败(缺 key / API 挂 → calls==0)不写，下一轮自动重试，不白等一个间隔。
     interval = int(xc.get("min_interval_minutes", 240))
-    if conn is not None and interval > 0:
-        from radar.store import get_meta, set_meta
+    throttle = conn is not None and interval > 0
+    if throttle:
+        from radar.store import get_meta
 
         last = parse_iso(get_meta(conn, "last_x_run"))
         now = datetime.now(timezone.utc)
@@ -76,7 +79,6 @@ def fetch_x(cfg: dict, conn=None) -> list[dict]:
             mins = int((now - last).total_seconds() // 60)
             log.info("x 节流：距上次拉取 %d 分钟 < %d，跳过", mins, interval)
             return []
-        set_meta(conn, "last_x_run", now.isoformat())
 
     items: list[dict] = []
     calls = 0
@@ -95,7 +97,14 @@ def fetch_x(cfg: dict, conn=None) -> list[dict]:
             log.info("x/%-22s %2d 条", name, len(got))
         except Exception as e:  # noqa: BLE001 — 单账号失败不连累其他
             log.error("x/%s 失败: %s", name, e)
-    log.info("x 本轮调用 %d 次（≤名单人数）", calls)
+    log.info("x 本轮调用 %d 次（≤名单人数），原创 %d 条", calls, len(items))
+
+    # 仅当确有 API 调用成功时才记节流戳；整轮失败(calls==0)不记 → 下轮重试
+    if throttle and calls > 0:
+        from radar.store import set_meta
+        set_meta(conn, "last_x_run", datetime.now(timezone.utc).isoformat())
+    elif throttle:
+        log.warning("x 本轮 0 次成功调用，不写 last_x_run，下轮将重试")
     return items
 
 
