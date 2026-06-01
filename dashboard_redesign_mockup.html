@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>中美政策雷达 · 设计预览</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Noto+Serif+SC:wght@400;500;700;900&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F4F0E7; --paper:#FCFAF4; --ink:#1B1814; --sub:#6A6155;
+    --line:#E5DECF; --line2:#D8CFBC;
+    --red:#BE2E16; --red-bg:#FBEDE9;
+    --amber:#8F6510; --amber-bg:#F8F0DE;
+    --gray:#9C9384;
+    --serif:"Noto Serif SC",serif; --display:"Fraunces",serif; --sans:"Noto Sans SC",sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--bg);color:var(--ink);font-family:var(--serif);
+    line-height:1.6;-webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(circle at 1px 1px, rgba(0,0,0,.018) 1px, transparent 0);
+    background-size:5px 5px;
+  }
+  .wrap{max-width:880px;margin:0 auto;padding:0 22px 80px}
+
+  /* Masthead */
+  .top-rule{height:5px;background:linear-gradient(90deg,var(--red) 0 22%,var(--ink) 22% 100%)}
+  header{padding:34px 0 18px;border-bottom:2px solid var(--ink);margin-bottom:0}
+  .kicker{font-family:var(--sans);font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--red);font-weight:700;margin-bottom:8px}
+  h1.title{font-family:var(--display);font-weight:900;font-size:clamp(34px,6vw,52px);line-height:1.02;letter-spacing:-.01em}
+  h1.title .cn{font-family:var(--serif);font-weight:900;display:block;font-size:.62em;margin-top:6px;letter-spacing:.02em}
+  .dateline{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;margin-top:16px;font-family:var(--sans);font-size:12.5px;color:var(--sub)}
+  .dateline .dot{width:4px;height:4px;border-radius:50%;background:var(--line2)}
+  .counts{display:flex;gap:14px;font-family:var(--sans);font-weight:700;font-size:12.5px}
+  .counts b{font-size:15px}
+  .c-high{color:var(--red)} .c-med{color:var(--amber)} .c-low{color:var(--gray)}
+
+  /* Filter chips */
+  .filters{position:sticky;top:0;z-index:5;background:var(--bg);
+    padding:14px 0;border-bottom:1px solid var(--line);
+    display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .filters .lbl{font-family:var(--sans);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--sub);margin-right:4px}
+  .chip{font-family:var(--sans);font-size:12.5px;font-weight:500;padding:5px 13px;border:1px solid var(--line2);
+    border-radius:100px;background:var(--paper);cursor:pointer;color:var(--ink);transition:all .15s;white-space:nowrap}
+  .chip:hover{border-color:var(--ink)}
+  .chip.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+  /* Section heads */
+  .section-head{display:flex;align-items:baseline;gap:12px;margin:34px 0 16px}
+  .section-head .bar{font-family:var(--display);font-weight:900;font-size:20px}
+  .section-head .en{font-family:var(--sans);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--sub)}
+  .section-head .line{flex:1;height:1px;background:var(--line)}
+
+  /* Source-type tag */
+  .stype{font-family:var(--sans);font-size:10.5px;font-weight:700;letter-spacing:.08em;padding:2px 8px;border-radius:4px;text-transform:uppercase}
+  .st-view{background:#EAF0EC;color:#2F6B43} /* 观点/people */
+  .st-gov{background:#ECEAF4;color:#4A3F86}  /* 官方 */
+  .st-media{background:#F0EEE8;color:#7A7263} /* 媒体 */
+
+  /* HERO high-signal cards */
+  .hero{background:var(--paper);border:1px solid var(--line2);border-left:5px solid var(--red);
+    border-radius:3px;padding:24px 26px;margin-bottom:16px;position:relative;
+    box-shadow:0 1px 0 rgba(0,0,0,.02);opacity:0;transform:translateY(8px);
+    animation:rise .5s ease forwards}
+  .hero .meta-top{display:flex;align-items:center;gap:10px;margin-bottom:11px;flex-wrap:wrap}
+  .sig-badge{font-family:var(--sans);font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    color:#fff;background:var(--red);padding:3px 9px;border-radius:4px}
+  .hero h2{font-family:var(--serif);font-weight:700;font-size:clamp(20px,3vw,25px);line-height:1.28;margin-bottom:10px;letter-spacing:-.005em}
+  .synopsis{font-size:15.5px;color:#3A352E;margin-bottom:14px;line-height:1.62}
+  .who{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin-bottom:13px}
+  .who .who-lbl{font-family:var(--sans);font-size:11px;color:var(--sub);letter-spacing:.04em}
+  .who .person{font-family:var(--sans);font-size:12px;font-weight:500;background:#fff;border:1px solid var(--line2);padding:3px 10px;border-radius:100px}
+  .card-foot{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;
+    padding-top:12px;border-top:1px solid var(--line)}
+  .src{font-family:var(--sans);font-size:11.5px;color:var(--sub)}
+  .src a{color:var(--red);text-decoration:none;font-weight:500}
+  .tags{display:flex;gap:6px;flex-wrap:wrap}
+  .tag{font-family:var(--sans);font-size:11px;color:var(--ink);background:var(--red-bg);padding:2px 9px;border-radius:100px}
+
+  /* MEDIUM cards */
+  .med{background:transparent;border-bottom:1px solid var(--line);padding:18px 2px;
+    opacity:0;transform:translateY(8px);animation:rise .5s ease forwards}
+  .med .meta-top{display:flex;align-items:center;gap:9px;margin-bottom:8px;flex-wrap:wrap}
+  .med .sig-badge{background:var(--amber)}
+  .med h3{font-family:var(--serif);font-weight:700;font-size:18px;line-height:1.32;margin-bottom:7px}
+  .med .synopsis{font-size:14.5px;margin-bottom:10px;color:#46413A}
+  .med .tag{background:var(--amber-bg)}
+
+  /* LOW collapsed */
+  details.low{margin-top:26px;border-top:2px solid var(--ink);padding-top:14px}
+  details.low summary{font-family:var(--sans);font-weight:700;font-size:13px;letter-spacing:.04em;cursor:pointer;color:var(--sub);list-style:none}
+  details.low summary::-webkit-details-marker{display:none}
+  details.low summary::before{content:"▸ ";color:var(--gray)}
+  details.low[open] summary::before{content:"▾ "}
+  .low-item{display:flex;gap:10px;align-items:baseline;padding:10px 2px;border-bottom:1px dotted var(--line);font-size:14px;color:var(--sub)}
+  .low-item .src{flex-shrink:0}
+
+  @keyframes rise{to{opacity:1;transform:translateY(0)}}
+  .hide{display:none!important}
+  footer{margin-top:36px;font-family:var(--sans);font-size:11.5px;color:var(--gray);line-height:1.7;border-top:1px solid var(--line);padding-top:16px}
+</style>
+</head>
+<body>
+<div class="top-rule"></div>
+<div class="wrap">
+
+  <header>
+    <div class="kicker">独立信号雷达 · 不是新闻聚合</div>
+    <h1 class="title">US-CHINA RADAR<span class="cn">中美政策雷达</span></h1>
+    <div class="dateline">
+      <span>最后更新 2026-06-01 · 14:30 UTC</span>
+      <span class="dot"></span>
+      <div class="counts">
+        <span class="c-high"><b>3</b> 高</span>
+        <span class="c-med"><b>20</b> 中</span>
+        <span class="c-low"><b>69</b> 低</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="filters" id="filters">
+    <span class="lbl">筛选</span>
+    <button class="chip active" data-tag="all">全部</button>
+    <button class="chip" data-tag="关税">关税</button>
+    <button class="chip" data-tag="出口管制">出口管制</button>
+    <button class="chip" data-tag="制裁金融">制裁金融</button>
+    <button class="chip" data-tag="华盛顿政治">华盛顿政治</button>
+    <button class="chip" data-tag="高层互动">高层互动</button>
+    <button class="chip" data-tag="新能源">新能源</button>
+    <button class="chip" data-tag="AI">AI</button>
+    <button class="chip" data-tag="医药">医药</button>
+  </div>
+
+  <!-- HIGH -->
+  <div class="section-head">
+    <span class="bar" style="color:var(--red)">▍高信号</span>
+    <span class="en">Top Signals</span>
+    <span class="line"></span>
+  </div>
+
+  <article class="hero" data-tags="关税" style="animation-delay:.05s">
+    <div class="meta-top">
+      <span class="sig-badge">High</span>
+      <span class="stype st-gov">官方</span>
+    </div>
+    <h2>USTR 对越南启动 Section 301 调查</h2>
+    <p class="synopsis">USTR 正式对越南发起 301 调查，矛头指向经越南转口的中国商品与供应链绕道路径；一旦落地加税，将直接冲击近年"中国+1"的产能外移布局，也是对转口规避关税的系统性收紧信号。</p>
+    <div class="who"><span class="who-lbl">涉及</span>
+      <span class="person">USTR</span><span class="person">Amb. Jamieson Greer</span></div>
+    <div class="card-foot">
+      <span class="src">USTR（经新闻源）· 6 小时前 · <a href="#">查看原文 ↗</a></span>
+      <div class="tags"><span class="tag"># 关税</span></div>
+    </div>
+  </article>
+
+  <article class="hero" data-tags="关税" style="animation-delay:.12s">
+    <div class="meta-top">
+      <span class="sig-badge">High</span>
+      <span class="stype st-gov">官方</span>
+    </div>
+    <h2>台美贸易与安全协议·关税条款实施细则发布</h2>
+    <p class="synopsis">商务部国际贸易管理局（ITA）发布实施细则，正式确立美台协议项下的关税与原产地安排，标志协议由"签署"进入"执行"阶段——对涉台供应链与转运合规有直接影响。</p>
+    <div class="who"><span class="who-lbl">涉及</span>
+      <span class="person">Commerce / ITA</span></div>
+    <div class="card-foot">
+      <span class="src">Federal Register · 今日 · <a href="#">查看原文 ↗</a></span>
+      <div class="tags"><span class="tag"># 关税</span></div>
+    </div>
+  </article>
+
+  <article class="hero" data-tags="出口管制 AI" style="animation-delay:.19s">
+    <div class="meta-top">
+      <span class="sig-badge">High</span>
+      <span class="stype st-view">观点</span>
+    </div>
+    <h2>Sinocism「Sharp China」：三条对华政策风向</h2>
+    <p class="synopsis">Bill Bishop 本期点出三条值得盯的信号：美方暂停对台军售的传闻、收紧中国 AI 人才外流的动向、以及对中美基础研究合作"脱钩"的讨论。digest 含多条，已自动取最具政策相关性的子项归类。</p>
+    <div class="who"><span class="who-lbl">涉及</span>
+      <span class="person">Bill Bishop</span></div>
+    <div class="card-foot">
+      <span class="src">Sinocism · 9 小时前 · <a href="#">查看原文 ↗</a></span>
+      <div class="tags"><span class="tag"># 出口管制</span><span class="tag"># AI</span></div>
+    </div>
+  </article>
+
+  <!-- MEDIUM -->
+  <div class="section-head">
+    <span class="bar" style="color:var(--amber)">▍值得一看</span>
+    <span class="en">Worth a Look · 观点优先</span>
+    <span class="line"></span>
+  </div>
+
+  <article class="med" data-tags="关税" style="animation-delay:.24s">
+    <div class="meta-top"><span class="sig-badge">Med</span><span class="stype st-view">观点</span></div>
+    <h3>Trade Talks：本轮关税升级的价格传导被低估？</h3>
+    <p class="synopsis">Chad Bown 在最新一期拆解关税升级对终端消费价格的滞后冲击，认为市场普遍低估了传导时滞与累积效应。</p>
+    <div class="who"><span class="who-lbl">涉及</span><span class="person">Chad Bown · PIIE</span></div>
+    <div class="card-foot"><span class="src">Trade Talks（播客）· 1 天前 · <a href="#">收听 ↗</a></span>
+      <div class="tags"><span class="tag"># 关税</span></div></div>
+  </article>
+
+  <article class="med" data-tags="出口管制" style="animation-delay:.29s">
+    <div class="meta-top"><span class="sig-badge">Med</span><span class="stype st-view">观点</span></div>
+    <h3>Derisky Business：outbound 投资审查的执行盲区</h3>
+    <p class="synopsis">两位主持讨论对外投资审查落地中的合规灰区与企业实操难点，点名几类最容易踩线的交易结构。</p>
+    <div class="who"><span class="who-lbl">涉及</span><span class="person">Emily Kilcrease</span><span class="person">Geoffrey Gertz · CNAS</span></div>
+    <div class="card-foot"><span class="src">Derisky Business（播客）· 1 天前 · <a href="#">收听 ↗</a></span>
+      <div class="tags"><span class="tag"># 出口管制</span></div></div>
+  </article>
+
+  <article class="med" data-tags="制裁金融" style="animation-delay:.34s">
+    <div class="meta-top"><span class="sig-badge">Med</span><span class="stype st-view">观点</span></div>
+    <h3>Chartbook：把这轮美元与资本流动放进地缘金融变局</h3>
+    <p class="synopsis">Adam Tooze 将近期美元走势与跨境资本流动置于更大的地缘金融重构框架下解读，提示对新兴市场的外溢风险。</p>
+    <div class="who"><span class="who-lbl">涉及</span><span class="person">Adam Tooze</span></div>
+    <div class="card-foot"><span class="src">Chartbook · 2 天前 · <a href="#">查看原文 ↗</a></span>
+      <div class="tags"><span class="tag"># 制裁金融</span></div></div>
+  </article>
+
+  <article class="med" data-tags="关税" style="animation-delay:.39s">
+    <div class="meta-top"><span class="sig-badge">Med</span><span class="stype st-media">媒体</span></div>
+    <h3>USTR 释放或重新加征 10% 普遍关税信号</h3>
+    <p class="synopsis">多家媒体援引消息称 USTR 正评估重新引入 10% 普遍关税；尚属"信号"而非定案，但对全行业进口成本有潜在普遍影响，值得跟进确认。</p>
+    <div class="who"><span class="who-lbl">涉及</span><span class="person">USTR</span></div>
+    <div class="card-foot"><span class="src">经新闻源 · 1 天前 · <a href="#">查看原文 ↗</a></span>
+      <div class="tags"><span class="tag"># 关税</span></div></div>
+  </article>
+
+  <!-- LOW -->
+  <details class="low">
+    <summary>其余 69 条低信号（多为转述、旧闻或与中美经贸无关）</summary>
+    <div class="low-item" data-tags="出口管制"><span class="src">Federal Register ·</span><span>BIS 对个人出口管制执法令（Hans De Geetere）— 个案执法，无新政策 · # 出口管制</span></div>
+    <div class="low-item" data-tags=""><span class="src">ChinaTalk ·</span><span>Arizona's Abundance Playbook — 美国国内政策，与中美无关</span></div>
+    <div class="low-item" data-tags=""><span class="src">Sinocism ·</span><span>习近平会见巴基斯坦总理 — 双边外交，非中美</span></div>
+  </details>
+
+  <footer>
+    ⚠️ 这是<b>设计预览</b>：版式、配色、卡片结构是真的；卡片里的"摘要"和"涉及的人"为示意内容（基于你真实抓到的标题），真实版本会在打分时由 Claude 现写。<br>
+    新增的展示要素：① 头条卡片置顶且醒目 ② 每条 1–2 句"这是什么 / 核心论点" ③「涉及」点出人/机构 ④「观点 / 官方 / 媒体」来源类型标识，观点（人）优先靠前。
+  </footer>
+
+</div>
+
+<script>
+  const chips=document.querySelectorAll('.chip');
+  const cards=document.querySelectorAll('[data-tags]');
+  chips.forEach(c=>c.addEventListener('click',()=>{
+    chips.forEach(x=>x.classList.remove('active'));
+    c.classList.add('active');
+    const t=c.dataset.tag;
+    // auto-open low section when filtering
+    const low=document.querySelector('details.low'); if(t!=='all') low.open=true;
+    cards.forEach(card=>{
+      const tags=card.dataset.tags||'';
+      card.classList.toggle('hide', t!=='all' && !tags.split(' ').includes(t));
+    });
+  }));
+</script>
+</body>
+</html>

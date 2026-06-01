@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>中美政策雷达</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Noto+Serif+SC:wght@400;500;700;900&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F4F0E7; --paper:#FCFAF4; --ink:#1B1814; --sub:#6A6155;
+    --line:#E5DECF; --line2:#D8CFBC;
+    --red:#BE2E16; --red-bg:#FBEDE9;
+    --amber:#8F6510; --amber-bg:#F8F0DE;
+    --gray:#9C9384; --green:#2F6B43;
+    --serif:"Noto Serif SC",serif; --display:"Fraunces",Georgia,serif; --sans:"Noto Sans SC",sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--bg);color:var(--ink);font-family:var(--serif);
+    line-height:1.6;-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%;
+    background-image:radial-gradient(circle at 1px 1px, rgba(0,0,0,.018) 1px, transparent 0);
+    background-size:5px 5px;
+  }
+  .wrap{max-width:880px;margin:0 auto;padding:0 22px 80px}
+
+  /* Masthead */
+  .top-rule{height:5px;background:linear-gradient(90deg,var(--red) 0 22%,var(--ink) 22% 100%)}
+  header{padding:34px 0 18px;border-bottom:2px solid var(--ink)}
+  .kicker{font-family:var(--sans);font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--red);font-weight:700;margin-bottom:8px}
+  h1.title{font-family:var(--display);font-weight:900;font-size:clamp(34px,6vw,52px);line-height:1.02;letter-spacing:-.01em}
+  h1.title .cn{font-family:var(--serif);font-weight:900;display:block;font-size:.62em;margin-top:6px;letter-spacing:.02em}
+  .dateline{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;margin-top:16px;font-family:var(--sans);font-size:12.5px;color:var(--sub)}
+  .dateline .dot{width:4px;height:4px;border-radius:50%;background:var(--line2)}
+  .counts{display:flex;gap:14px;font-family:var(--sans);font-weight:700;font-size:12.5px}
+  .counts b{font-size:15px}
+  .c-high{color:var(--red)} .c-med{color:var(--amber)} .c-low{color:var(--gray)}
+
+  /* 今日主线 */
+  .thread{background:var(--paper);border:1px solid var(--line2);border-left:4px solid var(--ink);
+    border-radius:3px;padding:16px 20px;margin:20px 0 4px}
+  .thread .th-lbl{font-family:var(--sans);font-size:10.5px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--red);margin-bottom:7px}
+  .thread p{font-size:15.5px;line-height:1.66;color:#2C2820}
+
+  /* Filter chips */
+  .filters{position:sticky;top:0;z-index:5;background:var(--bg);
+    padding:14px 0;border-bottom:1px solid var(--line);
+    display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .filters .lbl{font-family:var(--sans);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--sub);margin-right:4px}
+  .chip{font-family:var(--sans);font-size:12.5px;font-weight:500;padding:5px 13px;border:1px solid var(--line2);
+    border-radius:100px;background:var(--paper);cursor:pointer;color:var(--ink);transition:all .15s;white-space:nowrap}
+  .chip:hover{border-color:var(--ink)}
+  .chip.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+  /* Section heads */
+  .section-head{display:flex;align-items:baseline;gap:12px;margin:34px 0 16px}
+  .section-head .bar{font-family:var(--display);font-weight:900;font-size:20px}
+  .section-head .en{font-family:var(--sans);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--sub)}
+  .section-head .line{flex:1;height:1px;background:var(--line)}
+  .newline{font-family:var(--sans);font-size:11.5px;font-weight:700;letter-spacing:.04em;color:var(--red);
+    display:flex;align-items:center;gap:10px;margin:0 0 14px}
+  .newline::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--red-bg),transparent)}
+
+  /* badges */
+  .stype{font-family:var(--sans);font-size:10.5px;font-weight:700;letter-spacing:.08em;padding:2px 8px;border-radius:4px}
+  .st-view{background:#EAF0EC;color:#2F6B43}
+  .st-gov{background:#ECEAF4;color:#4A3F86}
+  .st-media{background:#F0EEE8;color:#7A7263}
+  .sig-badge{font-family:var(--sans);font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#fff;background:var(--red);padding:3px 9px;border-radius:4px}
+  .rumor{font-family:var(--sans);font-size:10.5px;font-weight:700;letter-spacing:.05em;color:#fff;background:#B0741A;padding:3px 8px;border-radius:4px}
+  .fresh{font-family:var(--sans);font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--green);background:#E5F0E8;border:1px solid #BcD9C6;padding:2px 7px;border-radius:100px}
+
+  /* HERO high cards */
+  .hero{background:var(--paper);border:1px solid var(--line2);border-left:5px solid var(--red);
+    border-radius:3px;padding:24px 26px;margin-bottom:16px;box-shadow:0 1px 0 rgba(0,0,0,.02)}
+  .hero .meta-top{display:flex;align-items:center;gap:10px;margin-bottom:11px;flex-wrap:wrap}
+  .hero h2{font-family:var(--serif);font-weight:700;font-size:clamp(20px,3vw,25px);line-height:1.28;margin-bottom:10px;letter-spacing:-.005em}
+  .hero h2 a,.med h3 a{color:inherit;text-decoration:none}
+  .hero h2 a:hover,.med h3 a:hover{text-decoration:underline}
+  .synopsis{font-size:15.5px;color:#3A352E;margin-bottom:13px;line-height:1.62}
+  .impact{border-left:3px solid var(--red);background:var(--red-bg);padding:8px 13px;border-radius:0 3px 3px 0;
+    font-size:14px;color:#5A2418;margin-bottom:13px;line-height:1.55}
+  .impact b{font-family:var(--sans);font-weight:700;font-size:11px;letter-spacing:.1em;color:var(--red);margin-right:7px}
+  .byline,.who{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin-bottom:9px}
+  .byline .lbl,.who .who-lbl{font-family:var(--sans);font-size:11px;color:var(--sub);letter-spacing:.04em;min-width:52px}
+  .person{font-family:var(--sans);font-size:12px;font-weight:500;background:#fff;border:1px solid var(--line2);padding:3px 10px;border-radius:100px}
+  .person.au{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .card-foot{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;
+    padding-top:12px;margin-top:4px;border-top:1px solid var(--line)}
+  .src{font-family:var(--sans);font-size:11.5px;color:var(--sub)}
+  .src a{color:var(--red);text-decoration:none;font-weight:500}
+  .src a:hover{text-decoration:underline}
+  .tags{display:flex;gap:6px;flex-wrap:wrap}
+  .tag{font-family:var(--sans);font-size:11px;color:var(--ink);background:var(--red-bg);padding:2px 9px;border-radius:100px;cursor:pointer}
+
+  /* MEDIUM cards */
+  .med{background:transparent;border-bottom:1px solid var(--line);padding:18px 2px}
+  .med .meta-top{display:flex;align-items:center;gap:9px;margin-bottom:8px;flex-wrap:wrap}
+  .med .sig-badge{background:var(--amber)}
+  .med h3{font-family:var(--serif);font-weight:700;font-size:18px;line-height:1.32;margin-bottom:7px}
+  .med .synopsis{font-size:14.5px;margin-bottom:10px;color:#46413A}
+  .med .impact{border-left-color:var(--amber);background:var(--amber-bg);color:#5C4310}
+  .med .impact b{color:var(--amber)}
+  .med .tag{background:var(--amber-bg)}
+
+  /* LOW collapsed */
+  details.low{margin-top:26px;border-top:2px solid var(--ink);padding-top:14px}
+  details.low summary{font-family:var(--sans);font-weight:700;font-size:13px;letter-spacing:.04em;cursor:pointer;color:var(--sub);list-style:none}
+  details.low summary::-webkit-details-marker{display:none}
+  details.low summary::before{content:"▸ ";color:var(--gray)}
+  details.low[open] summary::before{content:"▾ "}
+  .low-item{display:flex;gap:10px;align-items:baseline;padding:10px 2px;border-bottom:1px dotted var(--line);font-size:14px;color:var(--sub)}
+  .low-item .src{flex-shrink:0;font-weight:500;color:var(--ink)}
+  .low-item .lt{flex:1}
+  .low-item .lt a{color:inherit;text-decoration:none}
+  .low-item .lt a:hover{text-decoration:underline}
+  .low-item .ltag{font-family:var(--sans);font-size:10.5px;color:var(--gray);white-space:nowrap}
+
+  .empty-note{font-size:14px;color:var(--gray);padding:18px;text-align:center;border:1px dashed var(--line2);border-radius:3px;background:var(--paper)}
+  .hide{display:none!important}
+  footer{margin-top:36px;font-family:var(--sans);font-size:11.5px;color:var(--gray);line-height:1.7;border-top:1px solid var(--line);padding-top:16px}
+</style>
+</head>
+<body>
+<div class="top-rule"></div>
+<div class="wrap">
+
+  <header>
+    <div class="kicker">独立信号雷达 · 不是新闻聚合</div>
+    <h1 class="title">US-CHINA RADAR<span class="cn">中美政策雷达</span></h1>
+    <div class="dateline">
+      <span>最后更新 2026-06-01 · 21:07 UTC</span>
+      <span class="dot"></span>
+      <div class="counts">
+        <span class="c-high"><b>3</b> 高</span>
+        <span class="c-med"><b>4</b> 中</span>
+        <span class="c-low"><b>91</b> 低</span>
+      </div>
+    </div>
+  </header>
+
+  
+  <div class="thread">
+    <div class="th-lbl">今日主线 · The Thread</div>
+    <p>中国加速推进未来产业自主化与对外投资制度化，同步面临美国在供应链关键节点（越南）强化审查和对台湾贸易协议落地的多重压力。美方通过Section 301调查、台美贸易协议执行和普遍关税威胁等手段，逐步构建针对中国的供应链转向和台湾制度化优惠体系，而中国政府回应则集中于强调产业自主和投资框架整顿，双方在制度层面的竞争态势明显升温。</p>
+  </div>
+  
+
+  <nav class="filters" id="filters">
+    <span class="lbl">筛选</span>
+    <button class="chip active" data-tag="all">全部</button>
+    <button class="chip" data-tag="关税">关税</button><button class="chip" data-tag="出口管制">出口管制</button><button class="chip" data-tag="制裁金融">制裁金融</button><button class="chip" data-tag="华盛顿政治">华盛顿政治</button><button class="chip" data-tag="高层互动">高层互动</button><button class="chip" data-tag="新能源">新能源</button><button class="chip" data-tag="AI">AI</button><button class="chip" data-tag="医药">医药</button>
+  </nav>
+
+  <!-- 🔴 HIGH -->
+  <div class="section-head">
+    <span class="bar" style="color:var(--red)">▍高信号</span>
+    <span class="en">Top Signals</span><span class="line"></span>
+  </div>
+  <div class="newline">＋ 自上次运行新增 6 条</div>
+  
+    
+    <article class="hero" data-tags="出口管制">
+      <div class="meta-top">
+        <span class="sig-badge">High</span>
+        <span class="stype st-view">观点</span>
+        
+        <span class="fresh">新·24h</span>
+      </div>
+      <h2><a href="https://triviumchina.com/2026/06/01/state-council-tightens-control-over-outbound-investment/" target="_blank" rel="noopener noreferrer">中国国务院发布《对外投资条例》，7月起生效</a></h2>
+      <p class="synopsis">中国国务院于6月1日发布《对外投资条例》，将于7月1日正式生效。这是中国首次建立全面的国家级对外投资监管框架，取代原有的多层级部委规则体系。</p>
+      <div class="impact"><b>影响</b>中资对外投资审批与合规要求明显收紧，赴美及全球并购需重估报批流程与时间表，企业应关注该条例具体约束条款对跨境交易的影响。</div>
+      <div class="byline"><span class="lbl">观点来自</span><span class="person au">Trivium China (Andrew Polk / Trey McArver)</span></div>
+      <div class="who"><span class="who-lbl">涉及</span><span class="person">中国国务院</span></div>
+      <div class="card-foot">
+        <span class="src">Trivium China · 10 小时前 · <a href="https://triviumchina.com/2026/06/01/state-council-tightens-control-over-outbound-investment/" target="_blank" rel="noopener noreferrer">查看原文 ↗</a></span>
+        <div class="tags"><span class="tag" data-tag="出口管制"># 出口管制</span></div>
+      </div>
+    </article>
+    
+    <article class="hero" data-tags="关税">
+      <div class="meta-top">
+        <span class="sig-badge">High</span>
+        <span class="stype st-media">媒体</span>
+        
+        <span class="fresh">新·24h</span>
+      </div>
+      <h2><a href="https://news.google.com/rss/articles/CBMikgFBVV95cUxNWEg5U2ZPV2NWcmdIQWxJVUROdlQyWFpJOFA0bmVvSHFBNWxFcTZGUlFMVGZkV0dNWnBGMG9ST21GaTNYdXczWUpENldMU19YMXhZN1A5R1JaR1pnMUtIYWpJdW9jYTJEbi0xRmRTaXhzeDdsanI0bGloYkRTLVN0Wk1sWGthZzEweThLZFJaV0tjUQ?oc=5" target="_blank" rel="noopener noreferrer">美国USTR启动对越南Section 301调查</a></h2>
+      <p class="synopsis">美国贸易代表办公室(USTR)启动针对越南的Section 301调查。</p>
+      <div class="impact"><b>影响</b>虽针对越南，但涉及供应链转口与对华政策联动，中资制造业应关注越南相关关税变化对区域供应链的溢出效应。</div>
+      <div class="byline"><span class="lbl">观点来自</span><span class="person au">USTR</span></div>
+      <div class="who"><span class="who-lbl">涉及</span><span class="person">越南</span></div>
+      <div class="card-foot">
+        <span class="src">USTR Press · 2 天前 · <a href="https://news.google.com/rss/articles/CBMikgFBVV95cUxNWEg5U2ZPV2NWcmdIQWxJVUROdlQyWFpJOFA0bmVvSHFBNWxFcTZGUlFMVGZkV0dNWnBGMG9ST21GaTNYdXczWUpENldMU19YMXhZN1A5R1JaR1pnMUtIYWpJdW9jYTJEbi0xRmRTaXhzeDdsanI0bGloYkRTLVN0Wk1sWGthZzEweThLZFJaV0tjUQ?oc=5" target="_blank" rel="noopener noreferrer">查看原文 ↗</a></span>
+        <div class="tags"><span class="tag" data-tag="关税"># 关税</span></div>
+      </div>
+    </article>
+    
+    <article class="hero" data-tags="关税">
+      <div class="meta-top">
+        <span class="sig-badge">High</span>
+        <span class="stype st-gov">官方</span>
+        
+        <span class="fresh">新·24h</span>
+      </div>
+      <h2><a href="https://www.federalregister.gov/documents/2026/05/28/2026-10571/implementing-certain-tariff-related-elements-of-a-trade-and-security-agreement-between-the-american" target="_blank" rel="noopener noreferrer">特朗普签署EO 14346：台美贸易协议关税条款正式落地</a></h2>
+      <p class="synopsis">特朗普于2025年9月5日发布第14346号行政令，授权商务部长和USTR实施《美国在台协会与台北经济文化代表处间贸易与安全协议》的条款，该行政令已指导实施相关关税协议内容。</p>
+      <div class="impact"><b>影响</b>台美贸易协议正式在关税层面落实，涉及台湾对美商品的税率调整，中资涉台产业链需监测相关商品税率变化对竞争格局的影响。</div>
+      <div class="byline"><span class="lbl">观点来自</span><span class="person au">商务部国际贸易管理局</span></div>
+      <div class="who"><span class="who-lbl">涉及</span><span class="person">美国国务院驻台北经济文化代表处</span><span class="person">台北经济文化代表处</span></div>
+      <div class="card-foot">
+        <span class="src">Federal Register · Commerce Department, International Trade Administration… · 4 天前 · <a href="https://www.federalregister.gov/documents/2026/05/28/2026-10571/implementing-certain-tariff-related-elements-of-a-trade-and-security-agreement-between-the-american" target="_blank" rel="noopener noreferrer">查看原文 ↗</a></span>
+        <div class="tags"><span class="tag" data-tag="关税"># 关税</span></div>
+      </div>
+    </article>
+    
+  
+
+  <!-- 🟡 MEDIUM（观点优先） -->
+  
+  <div class="section-head">
+    <span class="bar" style="color:var(--amber)">▍值得一看</span>
+    <span class="en">Worth a Look · 观点优先</span><span class="line"></span>
+  </div>
+    
+    <article class="med" data-tags="AI,新能源">
+      <div class="meta-top">
+        <span class="sig-badge">Med</span>
+        <span class="stype st-view">观点</span>
+        
+        <span class="fresh">新·24h</span>
+      </div>
+      <h3><a href="https://triviumchina.com/2026/06/02/how-to-win-future-industries-and-influence-people/" target="_blank" rel="noopener noreferrer">习近平强调把握未来产业发展对中国至关重要</a></h3>
+      <p class="synopsis">中共中央党刊「求是」发表习近平1月30日政治局集体学习讲话全文，强调中国必须做好未来产业发展。该讲话重申产业竞争战略地位。</p>
+      <div class="impact"><b>影响</b>反映中国在AI、新能源等战略性新兴产业上的政策优先级与国家投资方向调整，美企与中资都应重估这些领域的竞争风险与合作空间</div>
+      <div class="byline"><span class="lbl">观点来自</span><span class="person au">Trivium China(Andrew Polk / Trey McArver)</span></div>
+      <div class="who"><span class="who-lbl">涉及</span><span class="person">中国</span></div>
+      <div class="card-foot">
+        <span class="src">Trivium China · 58 分钟前 · <a href="https://triviumchina.com/2026/06/02/how-to-win-future-industries-and-influence-people/" target="_blank" rel="noopener noreferrer">查看原文 ↗</a></span>
+        <div class="tags"><span class="tag" data-tag="AI"># AI</span><span class="tag" data-tag="新能源"># 新能源</span></div>
+      </div>
+    </article>
+    
+    <article class="med" data-tags="出口管制">
+      <div class="meta-top">
+        <span class="sig-badge">Med</span>
+        <span class="stype st-media">媒体</span>
+        
+        <span class="fresh">新·24h</span>
+      </div>
+      <h3><a href="https://news.google.com/rss/articles/CBMiswFBVV95cUxQR2N5RnRfS2ZCUjNEXzdGM21rdEM4VnZUdVNwRnJHQ0hxZXdaZGZkbl9pQjJ6MGhoa0pKRXJ2TERBZTh2eUl5T1FyWkVhLXpNMlJzdFVnZ3MwRmdJNTlNSlRWQmdoTjlPVzI3bjhlLVpEazl2elFhZklmWktJbmppdnd4QVlya2dOVW9xYlJzVWhPeVF4Nk4wNG9ZaXVvakY4Szk2cWZmbmJfNXE4UGZ5b3dEaw?oc=5" target="_blank" rel="noopener noreferrer">美国调查越南知识产权保护实践</a></h3>
+      <p class="synopsis">美国贸易代表办公室对越南的知识产权保护做法启动调查。虽针对越南，但该国系关键芯片/供应链节点，可能涉及中资代工及转口审查。</p>
+      <div class="impact"><b>影响</b>关注越南作为中美供应链枢纽的审查升级，中资及代工企业可能面临更严的知产与合规要求</div>
+      <div class="byline"><span class="lbl">观点来自</span><span class="person au">路透社</span></div>
+      <div class="who"><span class="who-lbl">涉及</span><span class="person">越南</span></div>
+      <div class="card-foot">
+        <span class="src">USTR Press · 1 天前 · <a href="https://news.google.com/rss/articles/CBMiswFBVV95cUxQR2N5RnRfS2ZCUjNEXzdGM21rdEM4VnZUdVNwRnJHQ0hxZXdaZGZkbl9pQjJ6MGhoa0pKRXJ2TERBZTh2eUl5T1FyWkVhLXpNMlJzdFVnZ3MwRmdJNTlNSlRWQmdoTjlPVzI3bjhlLVpEazl2elFhZklmWktJbmppdnd4QVlya2dOVW9xYlJzVWhPeVF4Nk4wNG9ZaXVvakY4Szk2cWZmbmJfNXE4UGZ5b3dEaw?oc=5" target="_blank" rel="noopener noreferrer">查看原文 ↗</a></span>
+        <div class="tags"><span class="tag" data-tag="出口管制"># 出口管制</span></div>
+      </div>
+    </article>
+    
+    <article class="med" data-tags="关税">
+      <div class="meta-top">
+        <span class="sig-badge">Med</span>
+        <span class="stype st-media">媒体</span>
+        <span class="rumor">未证实</span>
+        <span class="fresh">新·24h</span>
+      </div>
+      <h3><a href="https://news.google.com/rss/articles/CBMioAFBVV95cUxOOFlJRVE1YzFrOHlkbE5fMHROR1lDdGdjTHlGNWJBMG91Q0U2MnVXSU1Ed0FBYlUxakt4UUd1WGdFRnRsYVpfSUwtbTNVbVN3TGN0cUlyTHlWckJVNVZSWGdJR2QyZm5ITUtHVDl6ejhEaDRIRzJ0cjU1bVBuMUFsU3RRcTZ0Z2h6UlB6d240NDRzYXVXZjlqbWJsT0xvcmJp?oc=5" target="_blank" rel="noopener noreferrer">美USTR暗示可能重新实施10%普遍关税</a></h3>
+      <p class="synopsis">据报道，美国USTR释放信号暗示可能重新实施10%的普遍关税。</p>
+      <div class="impact"><b>影响</b>如若重启普遍关税，将直接涉及对华商品进口成本上升，中资出口企业应密切关注政策正式定调前的谈判动向。</div>
+      <div class="byline"><span class="lbl">观点来自</span><span class="person au">USTR</span></div>
+      
+      <div class="card-foot">
+        <span class="src">USTR Press · 5 天前 · <a href="https://news.google.com/rss/articles/CBMioAFBVV95cUxOOFlJRVE1YzFrOHlkbE5fMHROR1lDdGdjTHlGNWJBMG91Q0U2MnVXSU1Ed0FBYlUxakt4UUd1WGdFRnRsYVpfSUwtbTNVbVN3TGN0cUlyTHlWckJVNVZSWGdJR2QyZm5ITUtHVDl6ejhEaDRIRzJ0cjU1bVBuMUFsU3RRcTZ0Z2h6UlB6d240NDRzYXVXZjlqbWJsT0xvcmJp?oc=5" target="_blank" rel="noopener noreferrer">查看原文 ↗</a></span>
+        <div class="tags"><span class="tag" data-tag="关税"># 关税</span></div>
+      </div>
+    </article>
+    
+    <article class="med" data-tags="关税">
+      <div class="meta-top">
+        <span class="sig-badge">Med</span>
+        <span class="stype st-media">媒体</span>
+        <span class="rumor">未证实</span>
+        <span class="fresh">新·24h</span>
+      </div>
+      <h3><a href="https://news.google.com/rss/articles/CBMiZEFVX3lxTFBXUVNYc1RTSVQtajkyWVVHQ3RrbC00bllQdm5UdzVpSjZRa3Z3Y2FLak1VQ3ZGYzRZWHV1bXZQamIzeEFYeGVvZ0FCeC1IWUNybHk1UmpleExnblNCSmJCRnczSnQ?oc=5" target="_blank" rel="noopener noreferrer">Section 122关税7月到期，USTR暗示可能重新实施</a></h3>
+      <p class="synopsis">美国Section 122关税将于7月到期。USTR官员Greer暗示可能重新实施该关税。</p>
+      <div class="impact"><b>影响</b>Section 122关税动向不确定，相关商品进口企业应为重启做准备，监测官方正式宣布时间。</div>
+      <div class="byline"><span class="lbl">观点来自</span><span class="person au">USTR</span></div>
+      
+      <div class="card-foot">
+        <span class="src">USTR Press · 5 天前 · <a href="https://news.google.com/rss/articles/CBMiZEFVX3lxTFBXUVNYc1RTSVQtajkyWVVHQ3RrbC00bllQdm5UdzVpSjZRa3Z3Y2FLak1VQ3ZGYzRZWHV1bXZQamIzeEFYeGVvZ0FCeC1IWUNybHk1UmpleExnblNCSmJCRnczSnQ?oc=5" target="_blank" rel="noopener noreferrer">查看原文 ↗</a></span>
+        <div class="tags"><span class="tag" data-tag="关税"># 关税</span></div>
+      </div>
+    </article>
+    
+  
+
+  <!-- ⚪ LOW（折叠） -->
+  
+  <details class="low">
+    <summary>其余 91 条低信号（多为转述、旧闻或与中美经贸无关）</summary>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">OFAC Recent Actions ·</span>
+      <span class="lt"><a href="https://news.google.com/rss/articles/CBMitgFBVV95cUxPcno2TldJQWJoN2tCd3UtZFJCNkJZTnB5Sy1Kd1BUczlpSlBhZG1wMEFIeEkzOVdVQXBmRUVtb1c2X0FBQzVmazNnTWRobEtaZnRIanRGdkRZZEx0TjBqUkdzSE9KdGZhUHN4eVFvU0VLV1pxT1l5Z0VSaEtGdHdxSjRJdFlfd1IzWDhjRE04ZngyZ0NVZlk2MTdQRkt5TVBfMWZvcGVWMEd2VktuNzREQ1VaWFVrdw?oc=5" target="_blank" rel="noopener noreferrer">Steptoe每周制裁更新2026年6月1日</a> — Steptoe律所发布制裁周报。 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">Eye on China ·</span>
+      <span class="lt"><a href="https://eyeonchina.substack.com/p/lost-in-conversion" target="_blank" rel="noopener noreferrer">Lost in Conversion</a> — 中国国防工业能力分析无具体政策信息 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">Trivium China ·</span>
+      <span class="lt"><a href="https://triviumchina.com/2026/06/02/beijing-and-shanghai-team-up-to-police-food-delivery-platforms/" target="_blank" rel="noopener noreferrer">Beijing and Shanghai team up to police food delivery platforms</a> — 中国国内食品配送监管,纯中国国内事务 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">OFAC Recent Actions ·</span>
+      <span class="lt"><a href="https://news.google.com/rss/articles/CBMiogFBVV95cUxQTEpDZ256cGFtZDNrOG1TT00wcnNLWmxrSG5aTHpWNVBrNVFOeXo4RE9jbmdfZGFnM3pWcGxjclFPYmIwdS1pdXl6MlM1YVJSZU11ZVBQMkhxOXRJdE5uSkMxRl9FM2NJZ2lHQThna2FEMTBKVXI4ejdjeHFpUVFYVkhZczdKNk0zdGJHcW9iQklxZWVTTTlLWVVYYWg4MGhfbXc?oc=5" target="_blank" rel="noopener noreferrer">Steptoe制裁更新2026年6月1日</a> — Steptoe律所发布制裁更新。 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">The Wire China ·</span>
+      <span class="lt"><a href="https://www.thewirechina.com/2026/06/01/the-daily-roundup-june-1-2026/" target="_blank" rel="noopener noreferrer">The Daily Roundup</a> — 每日新闻汇总,无具体政策内容 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">Trivium China ·</span>
+      <span class="lt"><a href="https://triviumchina.com/2026/06/01/headline-pmis-decline-but-inflationary-pressures-ease/" target="_blank" rel="noopener noreferrer">Headline PMIs decline, but inflationary pressures ease</a> — 中国PMI数据分析,国内经济指标,与中美 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">Trivium China ·</span>
+      <span class="lt"><a href="https://triviumchina.com/2026/06/01/chery-led-coalition-makes-play-for-the-japanese-market/" target="_blank" rel="noopener noreferrer">Chery-led coalition makes play for the Japanese market</a> — 中国车企进入日本市场,涉及第三国,非中美 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">Chartbook ·</span>
+      <span class="lt"><a href="https://adamtooze.substack.com/p/top-links-1119-the-14th-oil-shock" target="_blank" rel="noopener noreferrer">Top Links 1119 The 14th oil shock. Japanese car makers in Canada. Stuck on diesel &amp; &#34;What the end is for&#34;.</a> — 综合通讯摘要无具体中美经贸政策识别 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">Trivium China ·</span>
+      <span class="lt"><a href="https://triviumchina.com/2026/06/01/china-puts-the-eu-on-notice-over-trade/" target="_blank" rel="noopener noreferrer">China puts the EU on notice over trade</a> — 中欧贸易争端,涉及第三方,非中美经贸 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">Trivium China ·</span>
+      <span class="lt"><a href="https://triviumchina.com/2026/06/01/top-diplomat-wang-yi-dangles-doubling-of-canadian-exports/" target="_blank" rel="noopener noreferrer">Top diplomat Wang Yi dangles doubling of Canadian exports</a> — 中加贸易谈判,涉及第三国,非中美经贸 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">Trivium China ·</span>
+      <span class="lt"><a href="https://triviumchina.com/2026/06/01/ding-xiangqun-tipped-to-head-national-financial-regulatory-administration/" target="_blank" rel="noopener noreferrer">National Financial Regulatory Administration gets a new head</a> — 中国金融监管机构人事变动,纯中国国内事务 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">Odd Lots ·</span>
+      <span class="lt"><a href="https://omny.fm/shows/odd-lots/the-hidden-plumbing-of-commodity-finance" target="_blank" rel="noopener noreferrer">The Hidden Plumbing of Commodity Finance</a> — 商品融资通用分析，非针对中美贸易特定问题 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="AI,华盛顿政治">
+      <span class="src">Tracking People&#39;s Daily ·</span>
+      <span class="lt"><a href="https://trackingpeoplesdaily.substack.com/p/zhong-sheng-us-must-remove-barriers" target="_blank" rel="noopener noreferrer">北京呼吁美国移除AI合作障碍</a> — 中国官媒人民日报刊文呼吁美国解除AI领域合作限制，反映中方在特朗普访华后推进中美关系改善的立场。 <span class="fresh">新</span></span>
+      <span class="ltag">AI · 华盛顿政治</span>
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">The Wire China ·</span>
+      <span class="lt"><a href="https://www.thewirechina.com/2026/05/31/jeffrey-wasserstrom-on-tackling-misconceptions-about-china/" target="_blank" rel="noopener noreferrer">Jeffrey Wasserstrom on Tackling Misconceptions about China</a> — 学术评论中国政治,非政策信号 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">The Wire China ·</span>
+      <span class="lt"><a href="https://www.thewirechina.com/2026/05/31/trumps-surrender-to-chinas-rise/" target="_blank" rel="noopener noreferrer">Trump’s Surrender to China’s Rise</a> — 观点评论,非政策宣布或官方信号 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="AI">
+      <span class="src">The Wire China ·</span>
+      <span class="lt"><a href="https://www.thewirechina.com/2026/05/31/chinas-next-ai-challenge-controlling-the-cost/" target="_blank" rel="noopener noreferrer">China’s Next AI Challenge: Controlling the Cost</a> — AI产业分析评论,无政策具体动向 <span class="fresh">新</span></span>
+      <span class="ltag">AI</span>
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">The Wire China ·</span>
+      <span class="lt"><a href="https://www.thewirechina.com/2026/05/31/yes-china-can/" target="_blank" rel="noopener noreferrer">Yes China Can</a> — 中国民主制度评论,与中美经贸无关 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="AI">
+      <span class="src">The Wire China ·</span>
+      <span class="lt"><a href="https://www.thewirechina.com/2026/05/31/china-and-democracy/" target="_blank" rel="noopener noreferrer">China and Democracy</a> — 观点评论,非政策或数据发布 <span class="fresh">新</span></span>
+      <span class="ltag">AI</span>
+    </div>
+    
+    <div class="low-item" data-tags="新能源">
+      <span class="src">The Wire China ·</span>
+      <span class="lt"><a href="https://www.thewirechina.com/2026/05/31/company-in-the-news-jinkosolar/" target="_blank" rel="noopener noreferrer">Company In The News: JinkoSolar</a> — 晶科电力出售美国佛州子公司。 <span class="fresh">新</span></span>
+      <span class="ltag">新能源</span>
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">Sinica Podcast ·</span>
+      <span class="lt"><a href="https://www.sinicapodcast.com/p/social-currency-phrase-of-the-week" target="_blank" rel="noopener noreferrer">&#34;Social currency&#34; — Phrase of the Week</a> — 纯中国国内社会文化话题，与中美经贸无关 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">Chartbook ·</span>
+      <span class="lt"><a href="https://adamtooze.substack.com/p/top-links-1118-irans-migration-picture" target="_blank" rel="noopener noreferrer">Top Links 1118 Iran&#39;s Migration Picture. Russia&#39;s Economic Slowdown. Chinese Fiscal-Nicotine State and May Chandavong</a> — 综合通讯摘要内容无具体中美经贸政策 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">Chartbook ·</span>
+      <span class="lt"><a href="https://adamtooze.substack.com/p/top-links-1117-the-biggest-profit" target="_blank" rel="noopener noreferrer">Top Links 1117 The biggest profit-sharing exercise ever? Running out of sulphur. Where Chimerica still lives &amp; Japanese Taiwan.</a> — 综合通讯摘要无中美经贸具体信息 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="关税">
+      <span class="src">House Ways &amp; Means ·</span>
+      <span class="lt"><a href="https://news.google.com/rss/articles/CBMiaEFVX3lxTFBxM0EwN28xb2hvd2VsaDlUYm5NTm9QQmJqaVNodmhGZkRRLUMwMFRCMVlDbjF6RUpFdEV1SHlNRHdZSUlRNFRzSjBBLXhKLVJBNE9HRG5xeUlNSDVONi1kUmZBc1BLc2NT?oc=5" target="_blank" rel="noopener noreferrer">How to Win a Trade War - Paul Krugman | Substack</a> — 专栏评论,非政策声明或官方动向 <span class="fresh">新</span></span>
+      <span class="ltag">关税</span>
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">US-China Perception Monitor ·</span>
+      <span class="lt"><a href="https://uscnpm.substack.com/p/an-octopus-with-many-tentacles-w" target="_blank" rel="noopener noreferrer">An Octopus with Many Tentacles w/ Lynette Ong</a> — 中国国家权力外包研究纯学术分析无政策信号 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">Odd Lots ·</span>
+      <span class="lt"><a href="https://omny.fm/shows/odd-lots/how-the-invention-of-rope-gave-us-modern-civilization" target="_blank" rel="noopener noreferrer">How the Invention of Rope Gave Us Modern Civilization</a> — 绳索历史科普，与中美经贸政策无关 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">Pekingnology ·</span>
+      <span class="lt"><a href="https://www.pekingnology.com/p/report-on-the-military-activities" target="_blank" rel="noopener noreferrer">Report on the Military Activities of Non-US Extra-Regional Countries in the Western Pacific in 2025</a> — 2025年非美域外国家西太军事活动报告。 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="华盛顿政治">
+      <span class="src">Sinica Podcast ·</span>
+      <span class="lt"><a href="https://www.sinicapodcast.com/p/trivium-china-podcast-what-exactly" target="_blank" rel="noopener noreferrer">播客讨论特朗普政府对台湾政策</a> — Trivium China播客节目邀请地缘政治分析师讨论Xi-Trump峰会后美国对台湾政策的走向。 <span class="fresh">新</span></span>
+      <span class="ltag">华盛顿政治</span>
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">Trivium China ·</span>
+      <span class="lt"><a href="https://triviumchina.com/2026/05/29/corporate-bond-surge-driven-by-refinancing/" target="_blank" rel="noopener noreferrer">Corporate bond surge driven by refinancing</a> — 中国企业债券融资,国内金融指标,与中美经 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">Trivium China ·</span>
+      <span class="lt"><a href="https://triviumchina.com/2026/05/29/beijing-turns-to-corporate-credit-system-in-fight-against-involution/" target="_blank" rel="noopener noreferrer">Beijing turns to corporate credit system in fight against involution</a> — 中国市场监管反垄断措施,纯中国国内监管 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="关税">
+      <span class="src">PIIE ·</span>
+      <span class="lt"><a href="https://news.google.com/rss/articles/CBMiqgFBVV95cUxNc2VBZ3FMT2hmVUlVU3g0SloyRTFGUXF3Y3pzLVNDYWFsZGk0WnM0Y1c3QlYxWmtCQVRHRlVXVGtLQ0xra1NoNlpxSjVfNzQzbWlNX19wdGdvd2RMYnI1cGpJVzhiSEkzLU5FbThFWmhZWHRrbXZ5THEtVjlTNklvZjdCa1g4MklnbWM5RFMzd3lzTHEtNUpfVk51YktFVEVPYlBzWlJTRGpydw?oc=5" target="_blank" rel="noopener noreferrer">特朗普第三次关税措施能否经法院挑战</a> — 彼得森国际经济研究所评析特朗普新一轮关税政策的法律风险。 <span class="fresh">新</span></span>
+      <span class="ltag">关税</span>
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">Trivium China ·</span>
+      <span class="lt"><a href="https://triviumchina.com/2026/05/29/guangzhou-begins-acquiring-used-homes-from-residents/" target="_blank" rel="noopener noreferrer">Guangzhou begins acquiring used homes from residents</a> — 广州房产收购,纯中国国内政策 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">Brookings ·</span>
+      <span class="lt"><a href="https://news.google.com/rss/articles/CBMihwFBVV95cUxQLUxiM2k4TUZMN0xVMFlXZUQtb2dkeHA2RW1SWmp0azNYbnZTQ2tHRUw0VVd1MTQ1YUd3aEQ3NlFiTlZZajZMSmRPWlJuYzhKazNaZFF0aWU3LVRiNWtkNDhzTWdBenZta0l2RUcxZlVlVGc0OFE1c2o0UmxNN0xoUUlKamdKT1U?oc=5" target="_blank" rel="noopener noreferrer">Shock, awe, and economic fallout - Brookings</a> — 标题模糊不清，无中美经贸具体信息 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">The Wire China ·</span>
+      <span class="lt"><a href="https://www.thewirechina.com/2026/05/29/the-daily-roundup-may-29-2026/" target="_blank" rel="noopener noreferrer">The Daily Roundup</a> — 每日新闻汇总,无具体政策内容 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">OFAC Recent Actions ·</span>
+      <span class="lt"><a href="https://news.google.com/rss/articles/CBMiowFBVV95cUxPRldFOVNCazhpZlJxelFEQjhYSE14SkhwUENmMjJlNDdDb2FBTlJfWEc2eEJocnNIY3djNDdpWkVMd040V19mQldYc210STBhOGJxQy1JQ3NwQ0dBSENQa0hweUN4emxKZE05aUZiY21LNDZZUXRmeHpfUG96Q2d2Q3ViU1o4bXh5aTdnYUl1X1NEUHc4ajBYdklPTXBKZ0dRU0k40gGcAUFVX3lxTE9ZNkk0OVdxNVRXZkliMl96MjBqUGQ3WWlDSXhQRlJpQXhPQ21RYVVtZHlleS1HZm5CRWkxd1ZwYnBvWDg4NmZpN25lcnp1MDdhLVRZb2lubWpEUHc1bURDZHlwdm0zbnlOYU5wSnNIdmh1QUwyQU9MWjhpTUFZTmswUEMtc2R5QVNtMER5UXpQWTVCMDRnOV9zS2J1ZA?oc=5" target="_blank" rel="noopener noreferrer">美财政部延长卢克石油外资出售许可至6月底</a> — 美国财政部延长俄罗斯卢克石油公司出售外资的许可证期限至6月底。 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">ChinaTalk ·</span>
+      <span class="lt"><a href="https://www.chinatalk.media/p/adventures-in-vibecoding-policy" target="_blank" rel="noopener noreferrer">Adventures in Vibecoding Policy</a> — 美国政策微网站设计讨论,与中美经贸无关 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">Chartbook ·</span>
+      <span class="lt"><a href="https://adamtooze.substack.com/p/top-links-1116-the-artist-of-camp" target="_blank" rel="noopener noreferrer">Top Links 1116 The artist of camp S-21. Inflation and real wages. Sexual Market Value and the politics of the Tatras.</a> — 综合通讯摘要与中美经贸无关 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">Baiguan ·</span>
+      <span class="lt"><a href="https://www.baiguan.news/p/is-delivery-war-drawing-to-an-end" target="_blank" rel="noopener noreferrer">Is delivery war drawing to an end?</a> — 茶饮咖啡行业数据分析纯中国国内消费趋势 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">Odd Lots ·</span>
+      <span class="lt"><a href="https://omny.fm/shows/odd-lots/gita-gopinath-on-why-interest-rates-have-surged-all-around-the-world" target="_blank" rel="noopener noreferrer">Gita Gopinath on Why Interest Rates Have Surged All Around the World</a> — 全球利率上升通用分析，虽涉AI但非中美政 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">Tracking People&#39;s Daily ·</span>
+      <span class="lt"><a href="https://trackingpeoplesdaily.substack.com/p/china-outlines-nine-priorities-of" target="_blank" rel="noopener noreferrer">China Outlines Nine Priorities of Global Governance Reform - New Plan for Urban Renewal</a> — 中国全球治理改革提议纯外交主张无经贸信号 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">The East is Read ·</span>
+      <span class="lt"><a href="https://www.eastisread.com/p/phd-dropouts-expose-forces-an-academic" target="_blank" rel="noopener noreferrer">PhD dropout’s exposé forces an academic fraud reckoning in China</a> — 中国学术造假丑闻纯国内科研治理问题 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="出口管制">
+      <span class="src">Federal Register · Commerce Department, Industry and Security Bureau ·</span>
+      <span class="lt"><a href="https://www.federalregister.gov/documents/2026/05/29/2026-10682/in-the-matter-of-hans-de-geetere-paul-parmentierlaan-121-8300-knokke-heist-belgium-and-nyckeestraat" target="_blank" rel="noopener noreferrer">In the Matter of: Hans De Geetere, Paul Parmentierlaan 121, 8300 Knokke Heist, Belgium, and Nyckeestraat 4, 8300 Knokke Heist, Belgium, Knokke-Heist Support Corporation Management, a/k/a Hasa Invest, Paul Parmentierlaan 121, 8300 Knokke Heist, Belgium, and Nyckeestraat 4, 8300 Knokke Heist, Belgium; Final Decision and Order</a> — 个人/企业出口管制执法令,与中美经贸无直 <span class="fresh">新</span></span>
+      <span class="ltag">出口管制</span>
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">Carnegie ·</span>
+      <span class="lt"><a href="https://news.google.com/rss/articles/CBMinAFBVV95cUxPa05GbnFhQTVWelZyUWRnNm1oVUlWSU9EZDhzT21sSmswY3UxdUJPbEtRX0RsYW1IU0ZwUUxXVU9iTDRBUkRxVzhWcFQwaENneVhwZWtFWHVqSnhzdktsTlp4bUhIZzBiQThtVzVlTGRoYU91LV83ZEkzZ2E0YW8wbGQxdVVNQmNnOW1Sb202Nk5JdHYyVER0WkNNc2s?oc=5" target="_blank" rel="noopener noreferrer">China’s Police and Security Cooperation Agreements - Carnegie Endowment for International Peace</a> — 中国警务和安全合作协议分析。 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">Carnegie ·</span>
+      <span class="lt"><a href="https://news.google.com/rss/articles/CBMihwFBVV95cUxPU0tEUkhZcTA0WHBGdlVLMlZ0VnlkOFRQbk5iMUtyNzNFZmZ3WGZOYnpvdUpRUmpPcUR0NWN1dkdtdHdEalI2N3UtVDZzUDhMM3FPVHQxb2lNV2hESVV4QXNWa1JfTTI4Wk1kVHg3aHNzMW5uZV9VeTdGck9hZXhvRjRXTU1RRFE?oc=5" target="_blank" rel="noopener noreferrer">Bangladesh’s Unfinished Revolution - Carnegie Endowment for International Peace</a> — 孟加拉国内政治革命与中美经贸无关 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">Brookings ·</span>
+      <span class="lt"><a href="https://news.google.com/rss/articles/CBMilgFBVV95cUxOenUxZzQwUzV6MUhfRWYwR0RTcklVRzlZMXhwNW1MaDhJcC1wT2xIVC1nVHBLazRESlZEa3ZVZVVZVW14Q1lVVEhJa3l6Q1BxMnRFN1hyOU9taTk3N0VnVkJRSGJpOWRkMjFqenJHVWdwUXIzUjdaRUJjYzVPUlhIZXQ2WnpfZnVtZVZ1TU1od1c4YkNRZHc?oc=5" target="_blank" rel="noopener noreferrer">Paxton’s landslide win signals end of Bush-era Texas GOP - Brookings</a> — 美国州级政治变化，与中美经贸无关 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">CNAS ·</span>
+      <span class="lt"><a href="https://news.google.com/rss/articles/CBMigAFBVV95cUxPZW9wNUJtczdYcVYyNzNraXNkcG5TLS01bUYyQm5SUU5oblVNcWdpT2tCQkpaY0xQUXQ2ZWtNU2FlNC1MNENrdHlJbWhxVXNWNnBWT0FUb21laGdZRU1ndjNHT293T3RJeVhiRG9FTy1ERHBwWHMyV20zdWFYS0hONw?oc=5" target="_blank" rel="noopener noreferrer">Thwarting Communications Blackout - Center for a New American Security | CNAS</a> — 通信黑暗面对策纯美国国内安全事务 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">Columbia CGEP ·</span>
+      <span class="lt"><a href="https://news.google.com/rss/articles/CBMihwFBVV95cUxOeEUyNkRPby1HOVBRcWhrXzlVMml4YkwyYWp0Y0o5X1BXdjMzZlRFU2ZGZjVKbGh5bFBtYWhSMXhKRHdCaE02ZjN4elFma3l0UkFUaEFHZ09VWkRXaldGNHd1MDFOaml3SlJPUHJOaTRMbFhuUGtST0FiSjNscjdfWDYxU0xFMzA?oc=5" target="_blank" rel="noopener noreferrer">China Investigates Deadly Coal Mine Blast - CGEP</a> — 中国煤矿事故纯国内安全事件 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">CSIS China ·</span>
+      <span class="lt"><a href="https://news.google.com/rss/articles/CBMie0FVX3lxTE1Qa2N3UmVMbGZaYzBMRE4tOFV3ejV3MDNmTmFMXzhISzVpb2lnVVhOb21wMEYtRUJaQnZaZVFCcmZrYXN4TjU1eXExVXZSQzVqWm5PbFpmMmNwT3d6aFBJMy00ZW11OHRqN3hFMjRIMjNERkVmaUh0cFVlOA?oc=5" target="_blank" rel="noopener noreferrer">Can China Control North Korea? - CSIS | Center for Strategic and International Studies</a> — 朝鲜问题纯地缘政治，与中美经贸无直接关联 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="华盛顿政治">
+      <span class="src">Carnegie ·</span>
+      <span class="lt"><a href="https://news.google.com/rss/articles/CBMiqAFBVV95cUxQTGV3UVJkOTlxSGVManNSckV1WVRscnFEaFNFZXB0cGlBMkQydXpmTzdvYV95ek83UTU2MWM3dHF3MVYzUUlfQzgzWG90bXo4R0hhcnZ3UE1abjUxM3dQTm5vYXAxTDI1aGNxS09vUndHQnd5Sm1SMURWaDBlV29wLUJWY05GbUpLSGR2dmxRSEg0eDVtUXJJN2xXZjdrVU5rb3ltb2kyT3k?oc=5" target="_blank" rel="noopener noreferrer">特朗普与习近平寻求三年稳定期</a> — 卡内基国际和平基金会评论特朗普与习近平峰会后中美关系走向。 <span class="fresh">新</span></span>
+      <span class="ltag">华盛顿政治</span>
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">Brookings ·</span>
+      <span class="lt"><a href="https://news.google.com/rss/articles/CBMigAFBVV95cUxQcU9YRzlTVXB4TGJZV1pKdEdwTDNFQnpfbnMtQjZsQ0pXLTFhazU5MHJ5ejM5ZGIzRjNHYzE2VnpTVEtmbDllRFVEdzFacEtxLWphTE9pRXY5d0RyZlBHMnhNY3M0SWNWVWFHcnhIeDVkdkI1eVlOS05PZ0lnTGVCSw?oc=5" target="_blank" rel="noopener noreferrer">How partisan is Taiwan’s security debate? - Brookings</a> — 台湾国内政治问题，非中美经贸政策信号 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">ChinaTalk ·</span>
+      <span class="lt"><a href="https://www.chinatalk.media/p/arizonas-abundance-playbook" target="_blank" rel="noopener noreferrer">Arizona&#39;s Abundance Playbook</a> — 亚利桑那州政策概览,纯美国州政策,与中美 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">The East is Read ·</span>
+      <span class="lt"><a href="https://www.eastisread.com/p/zhou-yongmei-rebuilding-trust-coordination" target="_blank" rel="noopener noreferrer">Zhou Yongmei: Rebuilding Trust, Coordination, and Collective Action in a Fragmented World</a> — 欧中国家协调框架讨论无具体中美经贸信息 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">The Wire China ·</span>
+      <span class="lt"><a href="https://www.thewirechina.com/2026/05/28/the-daily-roundup-may-28-2026/" target="_blank" rel="noopener noreferrer">The Daily Roundup</a> — 每日新闻汇总,无具体政策内容 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">Chartbook ·</span>
+      <span class="lt"><a href="https://adamtooze.substack.com/p/chartbook-450-modern-growth-surges" target="_blank" rel="noopener noreferrer">Chartbook 450: Modern growth surges. Or, why China&#39;s economic development is unique in human history.</a> — 中国经济发展历史分析纯宏观研究无政策信号 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">Chartbook ·</span>
+      <span class="lt"><a href="https://adamtooze.substack.com/p/top-links-1115-claiming-medical-sovereignty" target="_blank" rel="noopener noreferrer">Top Links 1115 Claiming medical sovereignty for Brazil. How Airbus views Africa. An Emperor and his falcons &amp; Woolf on the pose of criticism.</a> — 综合通讯摘要无中美经贸具体内容 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="AI">
+      <span class="src">Sinocism ·</span>
+      <span class="lt"><a href="https://sinocism.com/p/sharp-china-social-mobility-and-hukou" target="_blank" rel="noopener noreferrer">中国限制AI人才出境，持续施压日本等动态</a> — Sinocism播客涵盖户口改革、中国AI人才出国限制、对日本压力等多个话题。 <span class="fresh">新</span></span>
+      <span class="ltag">AI</span>
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">Pekingology ·</span>
+      <span class="lt">Can China Control North Korea? — 朝鲜半岛地缘政治分析，与中美经贸无直接关 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">Odd Lots ·</span>
+      <span class="lt"><a href="https://omny.fm/shows/odd-lots/brendan-greeley-on-the-real-500-year-history-of-the-dollar" target="_blank" rel="noopener noreferrer">Brendan Greeley on the Real 500-Year History of the Dollar</a> — 美元历史评论，不涉及对华政策或中美金融制 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">OFAC Recent Actions ·</span>
+      <span class="lt"><a href="https://news.google.com/rss/articles/CBMiYkFVX3lxTFAzTFBMWlM4MnlMRWp3WldzTkxwSWNFdkRnTTE1V3NselVLdC04cHJiQVBxbFNNNFhLZlgzeHVxeGJMNW1BZGcxMXZObHFFc1lQOXl2R25rSHZRQmZqMV94Nm5n?oc=5" target="_blank" rel="noopener noreferrer">美财政部宣布「经济fury」计划针对伊朗非法石油收入</a> — 美国财政部宣布制裁伊朗非法石油收入以削弱其军事融资。 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="AI">
+      <span class="src">Brookings ·</span>
+      <span class="lt"><a href="https://news.google.com/rss/articles/CBMimgFBVV95cUxQSkxDQ2c3dE5zRWZtcnZZWnVLNVhWRzZkcE92cUdFX2RadGJraGNuRW5KZmlMT0hYX3dFd1NLQWhnbVBaREdyNEEyUVJnWktKV2Q0VHkxdDVUTEpqSTlzY0VOSVFaOEgzcGhRZ2JhdElDZ2xxYlU0MjdvWjlCOXJOQVFRQkxhNU54dmZBNGJiMDgtbjc1dUliaWp3?oc=5" target="_blank" rel="noopener noreferrer">Why is the U.S. outpacing European countries in AI adoption? - Brookings</a> — 美欧AI采纳对比，与中美科技竞争无直接关 <span class="fresh">新</span></span>
+      <span class="ltag">AI</span>
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">Brookings ·</span>
+      <span class="lt"><a href="https://news.google.com/rss/articles/CBMixAFBVV95cUxPOE5VZUZTQURvVDRZOGJmbHBaYklZQ3hYVm9lOEpSNHpNTmsxNkllX2paNXJSWlVNdlo0QjdtT1NTYUpMQVJOaWQxT0V4NjBWOEttU3JYU0kyYTZWbUkzd2FFNkFQUjRxNXdXVFdBTU9TMTNFbTBrc3pWT0FFbUJPcmlSaWlfVnloZ2EzSUtqRWdCSVFCbVFKTHRYaGhVZ2RJNzFtQlRabXFFbGY5aGtKLU1rVVZxTWp2bElteHo4MDJNTkRt?oc=5" target="_blank" rel="noopener noreferrer">States of Affordability: A series on where and why US households struggle to make ends meet - Brookings</a> — 美国国内住房可负担性纯国内事务 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="制裁金融">
+      <span class="src">Congress.gov ·</span>
+      <span class="lt"><a href="https://www.congress.gov/bill/119th-congress/senate-bill/1711" target="_blank" rel="noopener noreferrer">美参议院提交《制止中国法案》(S 1711)</a> — 《制止中国法案》(S 1711)在参议院提交并转交银行、住房和城市事务委员会。 <span class="fresh">新</span></span>
+      <span class="ltag">制裁金融</span>
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">CSIS China ·</span>
+      <span class="lt"><a href="https://news.google.com/rss/articles/CBMibkFVX3lxTE9rbm5BYktCSDNORFJUdktiLWR3aTUtWE5hejhzUzRKM18yN2ZqWENMd3VOXzZSSWZlV1I4VjBQYXFFbHk0cWRUSC1GTzN4RjgxMGc4c2I5d3JGemJSanZndTNKSVVEU3d4NUd4R1R3?oc=5" target="_blank" rel="noopener noreferrer">The Terrorist Threat to the 2026 World Cup - CSIS | Center for Strategic and International Studies</a> — 恐怖主义威胁与中美经贸政策无关 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">Derisky Business ·</span>
+      <span class="lt"><a href="https://deriskybusiness.podbean.com/e/invested-allies-how-the-private-sector-can-boost-us-south-korea-economic-security-cooperation-live-episode/" target="_blank" rel="noopener noreferrer">How the Private Sector Can Boost U.S.-South Korea Economic Security Cooperation (LIVE)</a> — 美韩私营部门经济安全合作讨论。 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="华盛顿政治">
+      <span class="src">Carnegie ·</span>
+      <span class="lt"><a href="https://news.google.com/rss/articles/CBMikgFBVV95cUxNTDlWbmVfLTZsUXNSdzhZRVdBeUhVMTNWV1lyNEZjVVAyUDR4ZzFzMHZTN05BdGtTc2tyQ1AzWmg1cUdKbVpOVTlUY0NxMzNpaThBVHl2b3BpTTNjR1g5UzB0Ui1XWFVaQkp1QVpod3ZQd3hHUnlZWFQzaEgzemZjem9OSTVFMTRMRUU4SmpicGtFZw?oc=5" target="_blank" rel="noopener noreferrer">美中峰会后可控的不稳定关系</a> — 卡内基国际和平基金会分析美中峰会后关系特点。 <span class="fresh">新</span></span>
+      <span class="ltag">华盛顿政治</span>
+    </div>
+    
+    <div class="low-item" data-tags="关税">
+      <span class="src">USTR Press ·</span>
+      <span class="lt"><a href="https://news.google.com/rss/articles/CBMiiAFBVV95cUxPcVJPMlBpMXNWTkFGd01KVXNQcDNHUEc3c3MwRFNwOVF1a3Rpd2t1dXhMXzZzLWQ4dXpZdHRqLWxwdFZ3VlRHa18zQjVzMUFKT3lPVDR3VkQ4dk9kRGp0S1NJZk9yQTBFVlpodk0tWHRTRDZESU9LTzBGYllVSGFENzR3TGR1azVN?oc=5" target="_blank" rel="noopener noreferrer">Lower Tariffs Could Be Ahead. Here’s Why. - Barron&#39;s</a> — 评论性文章,非官方政策宣布或数据发布 <span class="fresh">新</span></span>
+      <span class="ltag">关税</span>
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">CSIS China ·</span>
+      <span class="lt"><a href="https://news.google.com/rss/articles/CBMihgFBVV95cUxPSWx2YjRfbjF4eXluQXMxQ3ZnUjVReUx4UG5WZGJqdi1aUUpLU3ppdk96UXpCMmpKeTB0VTBWWExqOElvRFROQUg2SUtKMWR5NGRrOHFKZFEwYVZEQVpFb0dSWmluSlI0SlUzeUNIUml0cjY2RER1Y2lrUUlKbDZKVkNfZVU3QQ?oc=5" target="_blank" rel="noopener noreferrer">Rebuilding U.S. Missile Inventory: A Multiyear Project - CSIS | Center for Strategic and International Studies</a> — 美国导弹库存纯军事，与中美经贸无直接关联 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">Tracking People&#39;s Daily ·</span>
+      <span class="lt"><a href="https://trackingpeoplesdaily.substack.com/p/the-plas-theory-of-total-war" target="_blank" rel="noopener noreferrer">The PLA&#39;s Theory of Total War</a> — 人民解放军总体战理论研究无具体政策落地信 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">The Wire China ·</span>
+      <span class="lt"><a href="https://www.thewirechina.com/2026/05/27/the-daily-roundup-may-27-2026/" target="_blank" rel="noopener noreferrer">The Daily Roundup</a> — 每日新闻汇总,无具体政策内容 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">Chartbook ·</span>
+      <span class="lt"><a href="https://adamtooze.substack.com/p/top-links-1014-bond-market-jitters" target="_blank" rel="noopener noreferrer">Top Links 1114 Bond Market Jitters. Supply Chain Shocks. The American Den of Pirates and American Health Improvement.</a> — 综合通讯摘要无中美经贸政策信息 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">Baiguan ·</span>
+      <span class="lt"><a href="https://www.baiguan.news/p/reconsidering-risk-reward-and-allocation" target="_blank" rel="noopener noreferrer">Reconsidering Risk, Reward, and Allocation to China</a> — 中国投资风险与收益重新评估建议。 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">ChinaTalk ·</span>
+      <span class="lt"><a href="https://www.chinatalk.media/p/chinas-father-of-robotics" target="_blank" rel="noopener noreferrer">China&#39;s Robotics Dream Began in 1972</a> — 中国机器人产业历史回顾,非当前政策信号 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">The Wire China ·</span>
+      <span class="lt"><a href="https://www.thewirechina.com/2026/05/27/germany-needs-to-confront-chinas-new-reality/" target="_blank" rel="noopener noreferrer">Germany Needs to Confront China’s New Reality</a> — 德国对华政策评论,涉及第三方,非中美经贸 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">Carnegie ·</span>
+      <span class="lt"><a href="https://news.google.com/rss/articles/CBMipAFBVV95cUxQejdpN3VFRUJzUUxZUnBTZHEtbTVfM3ZhbHFSNVh1T2U4d29qdmFPQ2FfRUVNY2lZdFlYV2VONXNER29NM1EwWWZZYkVrTlBoRDJjMFNyUEtHNkdlbzFKM255bDc1VTdkMUVWczNzM29fVjhvdHlIUV9odm9uZ2NSanJSclRZYUJjTFZBcWNZRjg1cHF4eDU2YUhuM1RPUmNudnctcQ?oc=5" target="_blank" rel="noopener noreferrer">Can Europe Compete with the United States and China? - Carnegie Endowment for International Peace</a> — 欧洲与美中竞争力对比分析。 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="华盛顿政治">
+      <span class="src">Tracking People&#39;s Daily ·</span>
+      <span class="lt"><a href="https://trackingpeoplesdaily.substack.com/p/gao-fei-on-building-a-china-us-relationship" target="_blank" rel="noopener noreferrer">中国外交学院副院长阐述中美「建设性战略稳定」关系愿景</a> — 中国外交学院副院长高飞在人民日报撰文阐述中国对中美关系的战略定位。 <span class="fresh">新</span></span>
+      <span class="ltag">华盛顿政治</span>
+    </div>
+    
+    <div class="low-item" data-tags="制裁金融">
+      <span class="src">Congress.gov ·</span>
+      <span class="lt"><a href="https://www.congress.gov/bill/119th-congress/house-bill/9028" target="_blank" rel="noopener noreferrer">美众议院提交涉华证券法修正案(HR 9028)</a> — 美众议院提交法案修正证券法，禁止与中华人民共和国有关联的经纪商、交易商和投资顾问在证交会注册，该案已转入众议院金融服务委员会。 <span class="fresh">新</span></span>
+      <span class="ltag">制裁金融</span>
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">Sinocism ·</span>
+      <span class="lt"><a href="https://sinocism.com/p/wang-yi-at-the-un-american-xinhua" target="_blank" rel="noopener noreferrer">Wang Yi at the UN; American Xinhua &#34;journalist&#34; arrested; Keeping AI talent at home; Recalculating carbon intensity; Another WMP blowup</a> — 记者被捕案件,属美国国内执法,与中美经贸 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">Trade Talks ·</span>
+      <span class="lt"><a href="https://tradetalkspodcast.com/podcast/216-how-to-win-a-trade-war-with-friends/" target="_blank" rel="noopener noreferrer">216. How to Win a Trade War, with friends</a> — 贸易战策略播客讨论，涉及Keynes &amp; Bown新著。 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">CSIS China ·</span>
+      <span class="lt"><a href="https://news.google.com/rss/articles/CBMimAFBVV95cUxOZk51cVpDTHI3ZmFSOWV6d3JPQkN0UTQ5Vmc5U0RaMGotMVdwN01zdnNlbkVlb0VvV1B0QVduSlcxTVZ4SlZVb2NBSEo0QUJYeUk5R3hxYW11ejlILU5WUkIxSGdvWHVXNVlLaE1RRGJiWk5kVFFRZ3FTMkVJOW5OSUp6eW5ydHlSZk5aUFR2NWNNbXFOOGpaQQ?oc=5" target="_blank" rel="noopener noreferrer">Elevating Pacific Perspectives in U.S. Regional Security Cooperation - CSIS | Center for Strategic and International Studies</a> — 太平洋安全合作框架无具体中美经贸政策内容 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">Brookings ·</span>
+      <span class="lt"><a href="https://news.google.com/rss/articles/CBMiggFBVV95cUxONDlJWTZCUWdSUjNfOU94ZElzY25HZG1Db2JhQXlXbU1keEhTazIzSmFPdktLeTF2R2hZOV9FbnBrSWJzY1hPelpuUElCOEMxY0tval84eUhYZ3R1bFdlT05za2RsbUVLcldzUEVKSmlpWVM0WFBrc0tVWU1UNG9BeUVB?oc=5" target="_blank" rel="noopener noreferrer">Time to level up: How to help America’s small businesses survive and thrive in tumultuous times - Brookings</a> — 美国小企业纾困纯国内经济政策 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">CSIS China ·</span>
+      <span class="lt"><a href="https://news.google.com/rss/articles/CBMieEFVX3lxTFBnSWFLTm5OT0h1VzNuVFZIUEE0RXVlRURlM3oySUc1MWlrTzd5RUhQMHZoSTBsVHBiVzQ2NDBFVllYeFZlcTZOLWtvYllCQWR0QmNSVVRwV19Xb1N0N1dWRmxaVmJhZTVPZVF0eFoteHdQcjNvVWhCWg?oc=5" target="_blank" rel="noopener noreferrer">Global Terrorism Threat Assessment 2026 - CSIS | Center for Strategic and International Studies</a> — 全球恐怖威胁评估与中美经贸政策无关 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="关税">
+      <span class="src">USTR Press ·</span>
+      <span class="lt"><a href="https://news.google.com/rss/articles/CBMiggFBVV95cUxPcTJaV1pwZGthZzJSLXdaUFhvY1U1eW5MVmVMdkM0UllBYjlkeXZ1MmRxMkstdDI5aWRFTkpqeFIwaFFCUmZOS1pjT3B6a2RWRGNiNVE3YVVISU1HemdlTkF3aFA1MHQ3NEVMYXVkUF8xN25vSmdsNzdjVFdMcDlPek1B?oc=5" target="_blank" rel="noopener noreferrer">Delegation of Tariff Authority by Other Means - Just Security</a> — 法律分析评论,非政策动向或官方信号 <span class="fresh">新</span></span>
+      <span class="ltag">关税</span>
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">Sinica Podcast ·</span>
+      <span class="lt"><a href="https://www.sinicapodcast.com/p/the-view-from-everywhere-else-eric" target="_blank" rel="noopener noreferrer">The View from Everywhere Else: Eric Olander on how the Global South is Reading the Beijing Summits</a> — 全球南方对北京峰会的解读。 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">Sinica Podcast ·</span>
+      <span class="lt"><a href="https://www.sinicapodcast.com/p/transcript-the-view-from-everywhere" target="_blank" rel="noopener noreferrer">Transcript | The View from Everywhere Else: Eric Olander on how the Global South is reading the Beijing summits</a> — 上述播客文字稿。 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">Brookings ·</span>
+      <span class="lt"><a href="https://news.google.com/rss/articles/CBMimgFBVV95cUxNYU5TQjYyUHc1dnpWcjdKNVBnM1hhV044dXRnZEhUUTJfNEF5RVBsc0lMc1IxTUxuS00zTnZRdXp4dGRXU1ljNkhiM3RVc3RYbW9xaTgxcWtuaFVHM2pxMmdvOXpScWFTWTU4WE45N0tIXzFTVThuYTVBWkxSVi1Jd3Qya01VLTZqTVdZQjYyTTAyOHhGWUpxcTJ3?oc=5" target="_blank" rel="noopener noreferrer">Rural health care infrastructure: Trends and considerations for the future - Brookings</a> — 农村医疗基础设施纯美国国内问题 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">The East is Read ·</span>
+      <span class="lt"><a href="https://www.eastisread.com/p/bride-price-and-chinas-young-male" target="_blank" rel="noopener noreferrer">Bride Price and China’s Young Male Migrants</a> — 中国彩礼与农民工结婚率研究纯社会学研究 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">The Wire China ·</span>
+      <span class="lt"><a href="https://www.thewirechina.com/2026/05/26/the-daily-roundup-may-26-2026/" target="_blank" rel="noopener noreferrer">The Daily Roundup</a> — 每日新闻汇总,无具体政策内容 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">Chartbook ·</span>
+      <span class="lt"><a href="https://adamtooze.substack.com/p/top-links-1113-profitless-in-space" target="_blank" rel="noopener noreferrer">Top Links 1113 Profitless in space. Arguing over grocery prices. The icon of the British war economy &amp; Marx on Sicily.</a> — 通用经济评论，与中美经贸无直接关联 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">ChinaTalk ·</span>
+      <span class="lt"><a href="https://www.chinatalk.media/p/wartalk-ukraines-forward-drone-line" target="_blank" rel="noopener noreferrer">WarTalk: Ukraine War Tactical Update</a> — 乌克兰战争分析,与中美经贸无关 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">Tracking People&#39;s Daily ·</span>
+      <span class="lt"><a href="https://trackingpeoplesdaily.substack.com/p/breakdown-of-china-serbia-and-china" target="_blank" rel="noopener noreferrer">Breakdown of China-Serbia &amp; China-Pakistan Joint Statements</a> — 中国与塞尔维亚巴基斯坦联合声明无中美经贸 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">Carnegie ·</span>
+      <span class="lt"><a href="https://news.google.com/rss/articles/CBMijwFBVV95cUxPQ21EbVFrNFltTHE0SlhQeTVCVkJJQU9DVzBpTkRyaWdJRW5ZNWZIRUtUT2JTajRSa1NYM3d3eTJTd0Z2eDJEZlhIS2tiRmg4dFBMOHUtV0UzUS00U1Vhek5pT1BmbW5sQlJFdW9VeWFwTDZONWRpMHdtUWxQTG5Tb2s2RW41MWhGaEJueUplcw?oc=5" target="_blank" rel="noopener noreferrer">Did Putin Return From China Empty-Handed? - Carnegie Endowment for International Peace</a> — 俄普京访华结果与中美经贸无直接关联 <span class="fresh">新</span></span>
+      
+    </div>
+    
+    <div class="low-item" data-tags="">
+      <span class="src">Sinocism ·</span>
+      <span class="lt"><a href="https://sinocism.com/p/xi-meets-pakistan-pm-and-serbian" target="_blank" rel="noopener noreferrer">Xi meets Pakistan PM and Serbian President; Coal mine explosion; Delinking basic public services from hukou; Crackdown on overseas trading; AI</a> — 户口改革与公共服务改革,纯中国国内政策 <span class="fresh">新</span></span>
+      
+    </div>
+    
+  </details>
+  
+
+  <footer>
+    china-policy-radar · 第①②层（官方 + 智库/Substack/人）· headline/摘要/影响/今日主线由 Claude 打分时生成，仅基于各条已有信息 · 数据直接渲染、无任何浏览器本地存储
+  </footer>
+</div>
+
+<script>
+(function(){
+  var active = new Set();
+  var allChip = document.querySelector('.chip[data-tag="all"]');
+  var tagChips = Array.prototype.slice.call(document.querySelectorAll('.chip[data-tag]')).filter(function(c){return c.dataset.tag!=='all';});
+  var cards = Array.prototype.slice.call(document.querySelectorAll('[data-tags]'));
+  var lowBox = document.querySelector('details.low');
+
+  function sync(){
+    tagChips.forEach(function(c){ c.classList.toggle('active', active.has(c.dataset.tag)); });
+    allChip.classList.toggle('active', active.size===0);
+  }
+  function apply(){
+    cards.forEach(function(card){
+      var tags = (card.getAttribute('data-tags')||'').split(',').filter(Boolean);
+      var show = active.size===0 || tags.some(function(t){ return active.has(t); });
+      card.classList.toggle('hide', !show);
+    });
+    if(lowBox){ lowBox.open = active.size>0; }
+  }
+  function toggle(t){
+    if(t==='all'){ active.clear(); }
+    else if(active.has(t)){ active.delete(t); }
+    else { active.add(t); }
+    sync(); apply();
+  }
+  document.querySelectorAll('[data-tag]').forEach(function(el){
+    if(el.tagName==='A') return;
+    el.addEventListener('click', function(ev){ ev.preventDefault(); toggle(el.dataset.tag); });
+  });
+})();
+</script>
+</body>
+</html>

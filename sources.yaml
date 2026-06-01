@@ -1,0 +1,99 @@
+# 中美政策「早期信号雷达」信号源配置（第①②层）
+# 来源：监测清单_v2.md 末尾「机器可读：①②层信号源」附录。
+# URL 以 validate.py 首跑校验为准；失效的会被列出待修。
+
+# ── 第一层：官方 ───────────────────────────────────────────────
+federal_register:                       # 免费 JSON API，无需 key
+  endpoint: https://www.federalregister.gov/api/v1/documents.json
+  lookback_days: 7
+  # 机构过滤（slug 经 /agencies 端点核实）：只保留这几个机构的规则，砍掉
+  # 全文搜索带进来的无关法规噪音。conditions[agencies][] 之间是 OR，
+  # 与 term 之间是 AND。
+  agencies:
+    - industry-and-security-bureau                 # BIS 出口管制/实体清单
+    - foreign-assets-control-office                # OFAC 制裁
+    - trade-representative-office-of-united-states # USTR 301/232
+    - treasury-department                          # Treasury（FEOC 等）
+    - commerce-department                          # Commerce（反倾销/ITA 等）
+  queries:                              # 宽泛词加引号做精确短语匹配
+    - '"export controls" China'
+    - '"entity list"'
+    - '"Section 301" China'
+    - '"Section 232" China'
+    - '"Chinese military companies"'    # 1260H 相关
+    - '"outbound investment" China'
+    - '"solar cells" China antidumping'
+    - '"lithium-ion battery" FEOC'
+
+congress_api:                           # 免费，需 api.data.gov key (CONGRESS_API_KEY)
+  endpoint: https://api.congress.gov/v3
+  congress: 119
+  watch:
+    - "BIOSECURE"
+    - "outbound investment"
+    - "China"
+    - "de minimis"
+    - "connected vehicles"
+
+official_rss:
+  # 这些机构无可靠官方 RSS（OFAC 的 RSS 已于 2025/1 停用，USTR 等只有新闻页），
+  # 改用 Google News RSS 按关键词代理订阅。
+  - name: OFAC Recent Actions
+    url: https://news.google.com/rss/search?q=OFAC+sanctions+China&hl=en-US&gl=US&ceid=US:en
+  - name: USTR Press
+    url: https://news.google.com/rss/search?q=USTR+China+tariff+Section+301&hl=en-US&gl=US&ceid=US:en
+  - name: House Select Committee on the CCP
+    url: https://news.google.com/rss/search?q=%22Select+Committee%22+China+CCP&hl=en-US&gl=US&ceid=US:en
+  - name: Senate Finance
+    url: https://news.google.com/rss/search?q=Senate+Finance+Committee+China+trade&hl=en-US&gl=US&ceid=US:en
+  - name: House Ways & Means
+    url: https://news.google.com/rss/search?q=Ways+and+Means+China+trade&hl=en-US&gl=US&ceid=US:en
+
+# ── 第二层：智库 + Substack（RSS）─────────────────────────────
+substacks:                              # Substack 一律「域名 + /feed」
+  - { name: Sinocism,       url: https://sinocism.com/feed }
+  - { name: ChinaTalk,      url: https://www.chinatalk.media/feed }
+  - { name: Sinification,   url: https://www.sinification.com/feed }
+  - { name: Interconnected, url: https://interconnected.blog/rss/ }
+  - { name: Trivium China,  url: https://triviumchina.com/feed/ }
+  - { name: The Wire China, url: https://www.thewirechina.com/feed/ }
+
+think_tanks:                            # Rhodium 有原生 RSS；其余无可靠 RSS，走 Google News 代理
+  - { name: Rhodium,       url: https://rhg.com/feed/ }
+  - { name: PIIE,          url: "https://news.google.com/rss/search?q=site%3Apiie.com+China&hl=en-US&gl=US&ceid=US:en" }
+  - { name: CSIS China,    url: "https://news.google.com/rss/search?q=site%3Acsis.org+China&hl=en-US&gl=US&ceid=US:en" }
+  - { name: CNAS,          url: "https://news.google.com/rss/search?q=site%3Acnas.org+China&hl=en-US&gl=US&ceid=US:en" }
+  - { name: Brookings,     url: "https://news.google.com/rss/search?q=site%3Abrookings.edu+China&hl=en-US&gl=US&ceid=US:en" }
+  - { name: Carnegie,      url: "https://news.google.com/rss/search?q=site%3Acarnegieendowment.org+China&hl=en-US&gl=US&ceid=US:en" }
+  - { name: Columbia CGEP, url: "https://news.google.com/rss/search?q=site%3Aenergypolicy.columbia.edu+China&hl=en-US&gl=US&ceid=US:en" }
+
+# ── 第二层 ·「人」线：个人 Newsletter / Substack ────────────────
+people_substacks:                       # Substack 一律 域名 + /feed
+  - { name: Pekingnology,            url: https://www.pekingnology.com/feed }
+  - { name: The China Lab,           url: https://thechinalab.substack.com/feed }
+  - { name: US-China Perception Monitor, url: https://uscnpm.substack.com/feed }
+  - { name: The East is Read,        url: https://www.eastisread.com/feed }
+  - { name: Ginger River Review,     url: https://www.gingerriver.com/feed }
+  - { name: Baiguan,                 url: https://www.baiguan.news/feed }
+  - { name: Eye on China,            url: https://eyeonchina.substack.com/feed }
+  - { name: Tracking People's Daily, url: https://trackingpeoplesdaily.substack.com/feed }
+  - { name: Dan Wang,                url: https://danwang.co/feed }
+  - { name: Chartbook,               url: https://adamtooze.substack.com/feed }
+
+# ── 第二层 ·「人」线：个人博客 ────────────────────────────────
+blogs:
+  - { name: Brad Setser (Follow the Money), url: https://feeds.feedburner.com/CFR_BradSetserBlog }
+
+# ── 第二层 ·「人」线：播客（feedparser 直接解析）──────────────
+podcasts:
+  - { name: Trade Talks,        url: https://tradetalkspodcast.com/feed/podcast/ }
+  - { name: Derisky Business,   url: https://deriskybusiness.podbean.com/feed.xml }
+  - { name: Sinica Podcast,     url: https://www.sinicapodcast.com/feed }
+  - { name: ChinaPower,         url: https://feeds.megaphone.fm/CSIS6301448962 }
+  - { name: Pekingology,        url: https://feeds.megaphone.fm/pekingology }
+  - { name: Odd Lots,           url: "https://www.omnycontent.com/d/playlist/e73c998e-6e60-432f-8610-ae210140c5b1/8a94442e-5a74-4fa2-8b8d-ae27003a8d6b/982f5071-765c-403d-969d-ae27003a8d83/podcast.rss" }
+
+# ── 第三层：X —— 本期不启用（radar/sources/x.py 仅留 TODO 占位）──
+x:
+  enabled: false
+  handles: []

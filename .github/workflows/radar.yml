@@ -1,0 +1,41 @@
+name: radar
+on:
+  schedule:
+    - cron: "*/30 * * * *"   # 每 30 分钟
+  workflow_dispatch: {}        # 也支持手动触发
+
+permissions:
+  contents: write              # 允许提交生成的看板
+
+concurrency:                   # 避免上一轮没跑完又起一轮
+  group: radar
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: run pipeline
+        run: python -m radar.run
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          CONGRESS_API_KEY: ${{ secrets.CONGRESS_API_KEY }}
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+
+      - name: commit dashboard + state
+        run: |
+          git config user.name "radar-bot"
+          git config user.email "bot@users.noreply.github.com"
+          # docs/ = 看板；radar.db = 跨运行状态(去重/防重复推送/今日主线)
+          git add docs/ radar.db
+          git commit -m "radar: update $(date -u +%FT%TZ)" || echo "no change"
+          git push

@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+.DS_Store
+.claude/
+
+# 注意：radar.db 故意【不】忽略 —— 它保存 seen(去重)/pushed(防重复推送)/meta(今日主线、
+# 上次 build 时间) 等跨运行状态。GitHub Actions 每轮把它和 docs/ 一起 commit 回仓库，
+# 这样 CI 无状态环境也能持续去重、不重复轰炸推送。

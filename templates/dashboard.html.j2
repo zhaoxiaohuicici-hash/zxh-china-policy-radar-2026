@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>中美政策雷达</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Noto+Serif+SC:wght@400;500;700;900&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F4F0E7; --paper:#FCFAF4; --ink:#1B1814; --sub:#6A6155;
+    --line:#E5DECF; --line2:#D8CFBC;
+    --red:#BE2E16; --red-bg:#FBEDE9;
+    --amber:#8F6510; --amber-bg:#F8F0DE;
+    --gray:#9C9384; --green:#2F6B43;
+    --serif:"Noto Serif SC",serif; --display:"Fraunces",Georgia,serif; --sans:"Noto Sans SC",sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--bg);color:var(--ink);font-family:var(--serif);
+    line-height:1.6;-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%;
+    background-image:radial-gradient(circle at 1px 1px, rgba(0,0,0,.018) 1px, transparent 0);
+    background-size:5px 5px;
+  }
+  .wrap{max-width:880px;margin:0 auto;padding:0 22px 80px}
+
+  /* Masthead */
+  .top-rule{height:5px;background:linear-gradient(90deg,var(--red) 0 22%,var(--ink) 22% 100%)}
+  header{padding:34px 0 18px;border-bottom:2px solid var(--ink)}
+  .kicker{font-family:var(--sans);font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--red);font-weight:700;margin-bottom:8px}
+  h1.title{font-family:var(--display);font-weight:900;font-size:clamp(34px,6vw,52px);line-height:1.02;letter-spacing:-.01em}
+  h1.title .cn{font-family:var(--serif);font-weight:900;display:block;font-size:.62em;margin-top:6px;letter-spacing:.02em}
+  .dateline{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;margin-top:16px;font-family:var(--sans);font-size:12.5px;color:var(--sub)}
+  .dateline .dot{width:4px;height:4px;border-radius:50%;background:var(--line2)}
+  .counts{display:flex;gap:14px;font-family:var(--sans);font-weight:700;font-size:12.5px}
+  .counts b{font-size:15px}
+  .c-high{color:var(--red)} .c-med{color:var(--amber)} .c-low{color:var(--gray)}
+
+  /* 今日主线 */
+  .thread{background:var(--paper);border:1px solid var(--line2);border-left:4px solid var(--ink);
+    border-radius:3px;padding:16px 20px;margin:20px 0 4px}
+  .thread .th-lbl{font-family:var(--sans);font-size:10.5px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--red);margin-bottom:7px}
+  .thread p{font-size:15.5px;line-height:1.66;color:#2C2820}
+
+  /* Filter chips */
+  .filters{position:sticky;top:0;z-index:5;background:var(--bg);
+    padding:14px 0;border-bottom:1px solid var(--line);
+    display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .filters .lbl{font-family:var(--sans);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--sub);margin-right:4px}
+  .chip{font-family:var(--sans);font-size:12.5px;font-weight:500;padding:5px 13px;border:1px solid var(--line2);
+    border-radius:100px;background:var(--paper);cursor:pointer;color:var(--ink);transition:all .15s;white-space:nowrap}
+  .chip:hover{border-color:var(--ink)}
+  .chip.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+  /* Section heads */
+  .section-head{display:flex;align-items:baseline;gap:12px;margin:34px 0 16px}
+  .section-head .bar{font-family:var(--display);font-weight:900;font-size:20px}
+  .section-head .en{font-family:var(--sans);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--sub)}
+  .section-head .line{flex:1;height:1px;background:var(--line)}
+  .newline{font-family:var(--sans);font-size:11.5px;font-weight:700;letter-spacing:.04em;color:var(--red);
+    display:flex;align-items:center;gap:10px;margin:0 0 14px}
+  .newline::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--red-bg),transparent)}
+
+  /* badges */
+  .stype{font-family:var(--sans);font-size:10.5px;font-weight:700;letter-spacing:.08em;padding:2px 8px;border-radius:4px}
+  .st-view{background:#EAF0EC;color:#2F6B43}
+  .st-gov{background:#ECEAF4;color:#4A3F86}
+  .st-media{background:#F0EEE8;color:#7A7263}
+  .sig-badge{font-family:var(--sans);font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#fff;background:var(--red);padding:3px 9px;border-radius:4px}
+  .rumor{font-family:var(--sans);font-size:10.5px;font-weight:700;letter-spacing:.05em;color:#fff;background:#B0741A;padding:3px 8px;border-radius:4px}
+  .fresh{font-family:var(--sans);font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--green);background:#E5F0E8;border:1px solid #BcD9C6;padding:2px 7px;border-radius:100px}
+
+  /* HERO high cards */
+  .hero{background:var(--paper);border:1px solid var(--line2);border-left:5px solid var(--red);
+    border-radius:3px;padding:24px 26px;margin-bottom:16px;box-shadow:0 1px 0 rgba(0,0,0,.02)}
+  .hero .meta-top{display:flex;align-items:center;gap:10px;margin-bottom:11px;flex-wrap:wrap}
+  .hero h2{font-family:var(--serif);font-weight:700;font-size:clamp(20px,3vw,25px);line-height:1.28;margin-bottom:10px;letter-spacing:-.005em}
+  .hero h2 a,.med h3 a{color:inherit;text-decoration:none}
+  .hero h2 a:hover,.med h3 a:hover{text-decoration:underline}
+  .synopsis{font-size:15.5px;color:#3A352E;margin-bottom:13px;line-height:1.62}
+  .impact{border-left:3px solid var(--red);background:var(--red-bg);padding:8px 13px;border-radius:0 3px 3px 0;
+    font-size:14px;color:#5A2418;margin-bottom:13px;line-height:1.55}
+  .impact b{font-family:var(--sans);font-weight:700;font-size:11px;letter-spacing:.1em;color:var(--red);margin-right:7px}
+  .byline,.who{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin-bottom:9px}
+  .byline .lbl,.who .who-lbl{font-family:var(--sans);font-size:11px;color:var(--sub);letter-spacing:.04em;min-width:52px}
+  .person{font-family:var(--sans);font-size:12px;font-weight:500;background:#fff;border:1px solid var(--line2);padding:3px 10px;border-radius:100px}
+  .person.au{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .card-foot{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;
+    padding-top:12px;margin-top:4px;border-top:1px solid var(--line)}
+  .src{font-family:var(--sans);font-size:11.5px;color:var(--sub)}
+  .src a{color:var(--red);text-decoration:none;font-weight:500}
+  .src a:hover{text-decoration:underline}
+  .tags{display:flex;gap:6px;flex-wrap:wrap}
+  .tag{font-family:var(--sans);font-size:11px;color:var(--ink);background:var(--red-bg);padding:2px 9px;border-radius:100px;cursor:pointer}
+
+  /* MEDIUM cards */
+  .med{background:transparent;border-bottom:1px solid var(--line);padding:18px 2px}
+  .med .meta-top{display:flex;align-items:center;gap:9px;margin-bottom:8px;flex-wrap:wrap}
+  .med .sig-badge{background:var(--amber)}
+  .med h3{font-family:var(--serif);font-weight:700;font-size:18px;line-height:1.32;margin-bottom:7px}
+  .med .synopsis{font-size:14.5px;margin-bottom:10px;color:#46413A}
+  .med .impact{border-left-color:var(--amber);background:var(--amber-bg);color:#5C4310}
+  .med .impact b{color:var(--amber)}
+  .med .tag{background:var(--amber-bg)}
+
+  /* LOW collapsed */
+  details.low{margin-top:26px;border-top:2px solid var(--ink);padding-top:14px}
+  details.low summary{font-family:var(--sans);font-weight:700;font-size:13px;letter-spacing:.04em;cursor:pointer;color:var(--sub);list-style:none}
+  details.low summary::-webkit-details-marker{display:none}
+  details.low summary::before{content:"▸ ";color:var(--gray)}
+  details.low[open] summary::before{content:"▾ "}
+  .low-item{display:flex;gap:10px;align-items:baseline;padding:10px 2px;border-bottom:1px dotted var(--line);font-size:14px;color:var(--sub)}
+  .low-item .src{flex-shrink:0;font-weight:500;color:var(--ink)}
+  .low-item .lt{flex:1}
+  .low-item .lt a{color:inherit;text-decoration:none}
+  .low-item .lt a:hover{text-decoration:underline}
+  .low-item .ltag{font-family:var(--sans);font-size:10.5px;color:var(--gray);white-space:nowrap}
+
+  .empty-note{font-size:14px;color:var(--gray);padding:18px;text-align:center;border:1px dashed var(--line2);border-radius:3px;background:var(--paper)}
+  .hide{display:none!important}
+  footer{margin-top:36px;font-family:var(--sans);font-size:11.5px;color:var(--gray);line-height:1.7;border-top:1px solid var(--line);padding-top:16px}
+</style>
+</head>
+<body>
+<div class="top-rule"></div>
+<div class="wrap">
+
+  <header>
+    <div class="kicker">独立信号雷达 · 不是新闻聚合</div>
+    <h1 class="title">US-CHINA RADAR<span class="cn">中美政策雷达</span></h1>
+    <div class="dateline">
+      <span>最后更新 {{ generated_full }}</span>
+      <span class="dot"></span>
+      <div class="counts">
+        <span class="c-high"><b>{{ high|length }}</b> 高</span>
+        <span class="c-med"><b>{{ medium|length }}</b> 中</span>
+        <span class="c-low"><b>{{ low|length }}</b> 低</span>
+      </div>
+    </div>
+  </header>
+
+  {% if daily_thread %}
+  <div class="thread">
+    <div class="th-lbl">今日主线 · The Thread</div>
+    <p>{{ daily_thread }}</p>
+  </div>
+  {% endif %}
+
+  <nav class="filters" id="filters">
+    <span class="lbl">筛选</span>
+    <button class="chip active" data-tag="all">全部</button>
+    {% for t in tags %}<button class="chip" data-tag="{{ t }}">{{ t }}</button>{% endfor %}
+  </nav>
+
+  <!-- 🔴 HIGH -->
+  <div class="section-head">
+    <span class="bar" style="color:var(--red)">▍高信号</span>
+    <span class="en">Top Signals</span><span class="line"></span>
+  </div>
+  <div class="newline">＋ {% if new_count %}自上次运行新增 {{ new_count }} 条{% else %}自上次运行无新增{% endif %}</div>
+  {% if high %}
+    {% for it in high %}
+    <article class="hero" data-tags="{{ it.tags|join(',') }}">
+      <div class="meta-top">
+        <span class="sig-badge">High</span>
+        <span class="stype st-{{ it._stype }}">{{ it._stype_label }}</span>
+        {% if it.rumor %}<span class="rumor">未证实</span>{% endif %}
+        {% if it._is_new %}<span class="fresh">新·24h</span>{% endif %}
+      </div>
+      <h2>{% if it.url %}<a href="{{ it.url }}" target="_blank" rel="noopener noreferrer">{{ it._headline }}</a>{% else %}{{ it._headline }}{% endif %}</h2>
+      {% if it._disp %}<p class="synopsis">{{ it._disp }}</p>{% endif %}
+      {% if it.impact %}<div class="impact"><b>影响</b>{{ it.impact }}</div>{% endif %}
+      {% if it.author %}<div class="byline"><span class="lbl">观点来自</span><span class="person au">{{ it.author }}</span></div>{% endif %}
+      {% if it.involved %}<div class="who"><span class="who-lbl">涉及</span>{% for p in it.involved %}<span class="person">{{ p }}</span>{% endfor %}</div>{% endif %}
+      <div class="card-foot">
+        <span class="src">{{ it.source }} · {{ it._rel }}{% if it.url %} · <a href="{{ it.url }}" target="_blank" rel="noopener noreferrer">查看原文 ↗</a>{% endif %}</span>
+        {% if it.tags %}<div class="tags">{% for t in it.tags %}<span class="tag" data-tag="{{ t }}"># {{ t }}</span>{% endfor %}</div>{% endif %}
+      </div>
+    </article>
+    {% endfor %}
+  {% else %}
+    <div class="empty-note">暂无高信号 — 平静即是好消息</div>
+  {% endif %}
+
+  <!-- 🟡 MEDIUM（观点优先） -->
+  {% if medium %}
+  <div class="section-head">
+    <span class="bar" style="color:var(--amber)">▍值得一看</span>
+    <span class="en">Worth a Look · 观点优先</span><span class="line"></span>
+  </div>
+    {% for it in medium %}
+    <article class="med" data-tags="{{ it.tags|join(',') }}">
+      <div class="meta-top">
+        <span class="sig-badge">Med</span>
+        <span class="stype st-{{ it._stype }}">{{ it._stype_label }}</span>
+        {% if it.rumor %}<span class="rumor">未证实</span>{% endif %}
+        {% if it._is_new %}<span class="fresh">新·24h</span>{% endif %}
+      </div>
+      <h3>{% if it.url %}<a href="{{ it.url }}" target="_blank" rel="noopener noreferrer">{{ it._headline }}</a>{% else %}{{ it._headline }}{% endif %}</h3>
+      {% if it._disp %}<p class="synopsis">{{ it._disp }}</p>{% endif %}
+      {% if it.impact %}<div class="impact"><b>影响</b>{{ it.impact }}</div>{% endif %}
+      {% if it.author %}<div class="byline"><span class="lbl">观点来自</span><span class="person au">{{ it.author }}</span></div>{% endif %}
+      {% if it.involved %}<div class="who"><span class="who-lbl">涉及</span>{% for p in it.involved %}<span class="person">{{ p }}</span>{% endfor %}</div>{% endif %}
+      <div class="card-foot">
+        <span class="src">{{ it.source }} · {{ it._rel }}{% if it.url %} · <a href="{{ it.url }}" target="_blank" rel="noopener noreferrer">查看原文 ↗</a>{% endif %}</span>
+        {% if it.tags %}<div class="tags">{% for t in it.tags %}<span class="tag" data-tag="{{ t }}"># {{ t }}</span>{% endfor %}</div>{% endif %}
+      </div>
+    </article>
+    {% endfor %}
+  {% endif %}
+
+  <!-- ⚪ LOW（折叠） -->
+  {% if low %}
+  <details class="low">
+    <summary>其余 {{ low|length }} 条低信号（多为转述、旧闻或与中美经贸无关）</summary>
+    {% for it in low %}
+    <div class="low-item" data-tags="{{ it.tags|join(',') }}">
+      <span class="src">{{ it.source }} ·</span>
+      <span class="lt">{% if it.url %}<a href="{{ it.url }}" target="_blank" rel="noopener noreferrer">{{ it._headline }}</a>{% else %}{{ it._headline }}{% endif %}{% if it._disp %} — {{ it._disp }}{% endif %}{% if it._is_new %} <span class="fresh">新</span>{% endif %}</span>
+      {% if it.tags %}<span class="ltag">{{ it.tags|join(' · ') }}</span>{% endif %}
+    </div>
+    {% endfor %}
+  </details>
+  {% endif %}
+
+  <footer>
+    china-policy-radar · 第①②层（官方 + 智库/Substack/人）· headline/摘要/影响/今日主线由 Claude 打分时生成，仅基于各条已有信息 · 数据直接渲染、无任何浏览器本地存储
+  </footer>
+</div>
+
+<script>
+(function(){
+  var active = new Set();
+  var allChip = document.querySelector('.chip[data-tag="all"]');
+  var tagChips = Array.prototype.slice.call(document.querySelectorAll('.chip[data-tag]')).filter(function(c){return c.dataset.tag!=='all';});
+  var cards = Array.prototype.slice.call(document.querySelectorAll('[data-tags]'));
+  var lowBox = document.querySelector('details.low');
+
+  function sync(){
+    tagChips.forEach(function(c){ c.classList.toggle('active', active.has(c.dataset.tag)); });
+    allChip.classList.toggle('active', active.size===0);
+  }
+  function apply(){
+    cards.forEach(function(card){
+      var tags = (card.getAttribute('data-tags')||'').split(',').filter(Boolean);
+      var show = active.size===0 || tags.some(function(t){ return active.has(t); });
+      card.classList.toggle('hide', !show);
+    });
+    if(lowBox){ lowBox.open = active.size>0; }
+  }
+  function toggle(t){
+    if(t==='all'){ active.clear(); }
+    else if(active.has(t)){ active.delete(t); }
+    else { active.add(t); }
+    sync(); apply();
+  }
+  document.querySelectorAll('[data-tag]').forEach(function(el){
+    if(el.tagName==='A') return;
+    el.addEventListener('click', function(ev){ ev.preventDefault(); toggle(el.dataset.tag); });
+  });
+})();
+</script>
+</body>
+</html>
