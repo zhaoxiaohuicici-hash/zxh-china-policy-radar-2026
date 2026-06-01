@@ -82,15 +82,27 @@ def struct_to_iso(st: time.struct_time | None) -> str | None:
         return None
 
 
+def parse_iso(s: str | None) -> datetime | None:
+    """解析 ISO-8601；兼容 Bluesky 的 'Z' 后缀（Py3.9 的 fromisoformat 不认 Z）。"""
+    if not s:
+        return None
+    try:
+        dt = datetime.fromisoformat(s.replace("Z", "+00:00"))
+    except Exception:
+        return None
+    return dt.replace(tzinfo=timezone.utc) if dt.tzinfo is None else dt
+
+
 def within_lookback(published_iso: str | None, days: int) -> bool:
     """published 在最近 days 天内则 True；无法解析时间的一律保留（True）。"""
     if not published_iso:
         return True
-    try:
-        dt = datetime.fromisoformat(published_iso)
-        if dt.tzinfo is None:
-            dt = dt.replace(tzinfo=timezone.utc)
-    except Exception:
+    dt = parse_iso(published_iso)
+    if dt is None:
         return True
     age = datetime.now(timezone.utc) - dt
     return age.total_seconds() <= days * 86400
+
+
+# 向后兼容别名（render 也复用）
+_parse_iso = parse_iso

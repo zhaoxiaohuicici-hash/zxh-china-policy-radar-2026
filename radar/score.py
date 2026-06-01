@@ -60,6 +60,11 @@ signal = 重要性 × 可信度 双维度。可信度【按措辞判定，不要
 
 rumor：默认 false；仅「未定调措辞 + 单一二手媒体」这类未证实风声为 true。已确认官方行动一律 false。
 
+person_type 区别对待（待评内容可能给 "person_type"）：
+- govt（议员/委员会官方号）：其法案动态/官方表态按【官方可信度】处理，措辞已定调的(通过/提出/致函/发起调查等)可 high。
+- vc_kol（意见领袖/创投，高产但话题杂）：必须与中美经贸/科技/政策【明确相关】才可给 medium 及以上；只是泛泛聊 AI/市场/政治/美国内政而无中美角度的一律 low。
+- reporter/scholar/industry：沿用通用规则，不额外约束。
+
 每条都必须在结果里出现一次，id 原样回填(批内序号)。所有字符串内部不要使用未转义的英文双引号，必要时用中文「」。"""
 
 
@@ -164,9 +169,12 @@ def _payload(batch: list[dict]) -> str:
             "title": it.get("title", ""),
             "excerpt": (it.get("summary") or "")[:400],
         }
-        author = SOURCE_AUTHORS.get(src)
+        # 作者 hint：源已预置(如 Bluesky/X 本人) > 静态作者表
+        author = it.get("author") or SOURCE_AUTHORS.get(src)
         if author:
-            rec["author"] = author  # 人物源默认作者
+            rec["author"] = author
+        if it.get("person_type"):       # X 源：reporter/scholar/vc_kol，供 vc_kol 降噪
+            rec["person_type"] = it["person_type"]
         compact.append(rec)
     return "待评内容：\n" + json.dumps(compact, ensure_ascii=False)
 
@@ -238,7 +246,7 @@ def _apply(batch: list[dict], results: list[dict]) -> None:
         it["headline"] = str(r.get("headline") or "").strip() or it.get("title", "")
         it["synopsis"] = str(r.get("summary") or "").strip()
         it["impact"] = str(r.get("impact") or "").strip()
-        it["author"] = str(r.get("author") or "").strip()
+        it["author"] = str(r.get("author") or "").strip() or (it.get("author") or "")
         inv = r.get("involved") or []
         it["involved"] = [str(x).strip() for x in inv if str(x).strip()][:6] if isinstance(inv, list) else []
         it["rumor"] = bool(r.get("rumor"))

@@ -73,13 +73,8 @@ def render(conn=None) -> str:
 
 
 def _parse(iso: str | None) -> datetime | None:
-    if not iso:
-        return None
-    try:
-        dt = datetime.fromisoformat(iso)
-    except Exception:
-        return None
-    return dt.replace(tzinfo=timezone.utc) if dt.tzinfo is None else dt
+    from radar.item import parse_iso  # 兼容 'Z' 后缀
+    return parse_iso(iso)
 
 
 def _reltime(iso: str | None, now: datetime) -> str:

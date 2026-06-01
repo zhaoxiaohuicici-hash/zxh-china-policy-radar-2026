@@ -23,9 +23,9 @@ def run() -> int:
 
     conn = connect()
 
-    # 1) fetch（逐源已隔离）+ 2) dedupe
+    # 1) fetch（逐源已隔离；conn 供 X 节流）+ 2) dedupe
     try:
-        items = fetch_all()
+        items = fetch_all(conn)
     except Exception as e:  # noqa: BLE001
         log.error("fetch 整体失败：%s", e)
         items = []

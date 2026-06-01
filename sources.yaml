@@ -93,7 +93,75 @@ podcasts:
   - { name: Pekingology,        url: https://feeds.megaphone.fm/pekingology }
   - { name: Odd Lots,           url: "https://www.omnycontent.com/d/playlist/e73c998e-6e60-432f-8610-ae210140c5b1/8a94442e-5a74-4fa2-8b8d-ae27003a8d6b/982f5071-765c-403d-969d-ae27003a8d83/podcast.rss" }
 
-# ── 第三层：X —— 本期不启用（radar/sources/x.py 仅留 TODO 占位）──
+# ── 第三层：Bluesky（人的实时观点，免费公开 API，无需鉴权）────────
+# accounts 为【已人工核实匹配】的账号；显示名/简介能对上其机构·头衔才纳入。
+bluesky:
+  enabled: true
+  lookback_days: 7
+  max_per_account: 8
+  drop_reposts: true      # 过滤转发
+  drop_replies: false     # 回复常含观点，默认保留
+  accounts:
+    - { name: Ana Swanson,       handle: anaswanson.bsky.social }   # NYT 贸易
+    - { name: Lingling Wei,      handle: lingling-wei.bsky.social } # WSJ 首席中国
+    - { name: Scott Kennedy,     handle: kennedychina.bsky.social } # CSIS
+    - { name: Jordan Schneider,  handle: jordanschneider.bsky.social } # ChinaTalk
+    - { name: Bill Bishop,       handle: billbishop.bsky.social }   # Sinocism
+    - { name: Adam Tooze,        handle: adamtooze.bsky.social }    # Chartbook
+    - { name: Chad Bown,         handle: chadpbown.com }            # PIIE
+    - { name: Martin Chorzempa,  handle: chorzempa.bsky.social }    # PIIE
+    - { name: Rush Doshi,        handle: rushdoshi.bsky.social }    # CFR/Georgetown
+    - { name: Bonnie Glaser,     handle: bglaser.bsky.social }      # GMF
+    - { name: Ilaria Mazzocco,   handle: ilariamazzocco.bsky.social } # CSIS 清洁技术
+    - { name: Graham Webster,    handle: gwbstr.com }               # Stanford DigiChina
+    - { name: Helen Toner,       handle: hlntnr.bsky.social }       # Georgetown CSET
+
+# ── 第三层：X（via TwitterAPI.io，鉴权用 .env 的 TWITTERAPI_KEY）────
+# handle 为【候选】，由 resolve 脚本逐个 /twitter/user/info 核实后回填 user_id；
+# 核实前 enabled 暂置 false，确认名单 + 成本后再开。person_type: reporter/scholar/vc_kol。
 x:
-  enabled: false
-  handles: []
+  enabled: true
+  lookback_days: 7
+  max_per_account: 10
+  include_replies: false        # 只原创
+  drop_retweets: true
+  min_interval_minutes: 240     # X 拉取节流(分钟)：与主流水线(30min)解耦，控成本。4h≈$16/月
+  accounts:
+    # —— reporter (15) —— handle/user_id 已逐个核实
+    - { name: Demetri Sevastopulo, person_type: reporter, handle: AsiaLens,        user_id: "59936143" }            # FT 美中，会混摄影/旅行→无关判 low
+    - { name: Lingling Wei,        person_type: reporter, handle: Lingling_Wei,    user_id: "499603787" }
+    - { name: Jenny Leonard,       person_type: reporter, handle: jendeben,        user_id: "2846196896" }          # Bloomberg economic statecraft
+    - { name: Ana Swanson,         person_type: reporter, handle: AnaSwanson,      user_id: "17647477" }
+    - { name: Keith Bradsher,      person_type: reporter, handle: KeithBradsher,   user_id: "161813561" }
+    - { name: Alexandra Alper,     person_type: reporter, handle: alexalper,       user_id: "53733438" }
+    - { name: Edward Wong,         person_type: reporter, handle: ewong,           user_id: "39030654" }
+    - { name: Bob Davis,           person_type: reporter, handle: bobdavis187,     user_id: "232437461" }
+    - { name: Phelim Kine,         person_type: reporter, handle: PhelimKine,      user_id: "374386176" }
+    - { name: Gavin Bade,          person_type: reporter, handle: GavinBade,       user_id: "369618088" }
+    - { name: Eunice Yoon,         person_type: reporter, handle: onlyyoontv,      user_id: "37397428" }
+    - { name: Kana Inagaki,        person_type: reporter, handle: kanainagaki,     user_id: "270938146" }
+    - { name: Eva Dou,             person_type: reporter, handle: evadou,          user_id: "37340599" }
+    - { name: Jeff Stein,          person_type: reporter, handle: SpyTalker,       user_id: "28366439" }            # SpyTalk 国安/情报，非中美判 low
+    - { name: Annmarie Hordern,    person_type: reporter, handle: annmarie,        user_id: "58518243" }            # Bloomberg 政治，偏美内政→非中美判 low
+    # —— scholar (9) ——
+    - { name: Brad Setser,         person_type: scholar,  handle: Brad_Setser,     user_id: "733647469305864195" }
+    - { name: Gregory Allen,       person_type: scholar,  handle: Gregory_C_Allen, user_id: "2491478227" }
+    - { name: Scott Kennedy,       person_type: scholar,  handle: KennedyCSIS,     user_id: "537353258" }
+    - { name: Paul Triolo,         person_type: scholar,  handle: pstAsiatech,     user_id: "732964902273306624" }
+    - { name: Chris Miller,        person_type: scholar,  handle: CRMiller1,       user_id: "143169389" }
+    - { name: Rush Doshi,          person_type: scholar,  handle: RushDoshi,       user_id: "428019591" }
+    - { name: Bonnie Glaser,       person_type: scholar,  handle: BonnieGlaser,    user_id: "2844510786" }
+    - { name: Martin Chorzempa,    person_type: scholar,  handle: ChorzempaMartin, user_id: "321187683" }
+    - { name: Dan Wang,            person_type: scholar,  handle: danwwang,        user_id: "223197526" }
+    # —— vc_kol (6) —— 须明确涉华才 medium+
+    - { name: Chamath Palihapitiya, person_type: vc_kol,  handle: chamath,         user_id: "3291691" }
+    - { name: David Sacks,         person_type: vc_kol,   handle: DavidSacks,      user_id: "1137701" }
+    - { name: Jason Calacanis,     person_type: vc_kol,   handle: Jason,           user_id: "3840" }
+    - { name: Balaji Srinivasan,   person_type: vc_kol,   handle: balajis,         user_id: "2178012643" }
+    - { name: Bill Gurley,         person_type: vc_kol,   handle: bgurley,         user_id: "5252591" }
+    - { name: Ben Thompson,        person_type: vc_kol,   handle: benthompson,     user_id: "40273" }
+    # —— govt (1) —— 按官方可信度处理
+    - { name: John Moolenaar,      person_type: govt,     handle: RepMoolenaar,    user_id: "2696643955" }
+    # —— industry (2) ——
+    - { name: Dylan Patel,         person_type: industry, handle: dylan522p,       user_id: "985281530070265862" }
+    - { name: Kyle Chan,           person_type: industry, handle: kyleichan,        user_id: "210702531" }

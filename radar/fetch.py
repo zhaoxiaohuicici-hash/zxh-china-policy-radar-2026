@@ -12,15 +12,20 @@ import logging
 import sys
 
 from radar.config import FETCH_LOOKBACK_DAYS, RSS_GROUPS, load_sources
+from radar.sources.bluesky import fetch_bluesky
 from radar.sources.congress import fetch_congress
 from radar.sources.federal_register import fetch_federal_register
 from radar.sources.rss import fetch_feed
+from radar.sources.x import fetch_x
 
 log = logging.getLogger("radar.fetch")
 
 
-def fetch_all() -> list[dict]:
-    """运行所有启用的源，返回去重（批内）后的 Item 列表。"""
+def fetch_all(conn=None) -> list[dict]:
+    """运行所有启用的源，返回去重（批内）后的 Item 列表。
+
+    conn 用于 X 源的成本节流（meta.last_x_run）；为 None 时 X 不节流（独立测试用）。
+    """
     cfg = load_sources()
     items: list[dict] = []
 
@@ -42,9 +47,11 @@ def fetch_all() -> list[dict]:
                 items,
             )
 
-    # ③ X：本期不启用
-    if (cfg.get("x") or {}).get("enabled"):
-        log.warning("x.enabled=true 但本期未实现 radar.sources.x，已跳过")
+    # ③ Bluesky（人的实时观点）
+    _run("bluesky", lambda: fetch_bluesky(cfg), items)
+
+    # ③ X via TwitterAPI.io（带成本节流，需 conn 才生效）
+    _run("x", lambda: fetch_x(cfg, conn), items)
 
     return _dedupe_batch(items)
 
@@ -77,7 +84,10 @@ def main() -> int:
         format="%(levelname)-5s %(message)s",
         stream=sys.stderr,
     )
-    items = fetch_all()
+    from radar.store import connect
+    conn = connect()
+    items = fetch_all(conn)
+    conn.close()
 
     # 汇总：按 source 计数
     by_source: dict[str, int] = {}
