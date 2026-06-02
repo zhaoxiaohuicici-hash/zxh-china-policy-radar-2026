@@ -21,13 +21,19 @@ pip install -r requirements.txt
 # 0) 把密钥填进 .env（config.py 启动自动加载）
 # 1) 校验所有信号源能否拉通（失效的会列出来）
 python validate.py
-# 2) 跑一次完整流水线（生成 docs/index.html、必要时推 ntfy）
+# 2) 跑一次完整流水线（本地写 radar.local.db + docs_local/index.html，均已 gitignore）
 python -m radar.run
 # 3) 单独测 ntfy 推送链路
 python -m radar.notify --test
-# 4) 只重渲染看板（不重新抓取/打分）
+# 4) 只重渲染看板（本地预览开 docs_local/index.html）
 python -m radar.render
 ```
+
+> **本地 vs CI 的状态文件**：`radar.db` 与 `docs/` 是 **CI 专属产物**（只有 GitHub Actions 读写并提交）。
+> 本地运行自动改用 `radar.local.db` 与 `docs_local/`（见 `config.py` 的 `IS_CI` 判断，均已 gitignore），
+> 所以**本地改代码 / push 永远不会碰仓库的 `radar.db` / `docs/`，不再有这两个文件的合并冲突**。
+> 本地预览看板请开 `docs_local/index.html`；线上看板由 CI 生成在 `docs/index.html`。
+> 想让本地也连真实库可设环境变量 `RADAR_DB=/path/to.db`。
 
 ## 上线（GitHub Actions + Pages）
 

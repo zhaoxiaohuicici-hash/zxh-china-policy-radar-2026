@@ -13,9 +13,8 @@ import yaml
 # ── 路径 ──────────────────────────────────────────────────────
 ROOT = Path(__file__).resolve().parent.parent
 SOURCES_YAML = ROOT / "sources.yaml"
-DB_PATH = ROOT / "radar.db"
-DOCS_DIR = ROOT / "docs"
 TEMPLATES_DIR = ROOT / "templates"
+# DB_PATH / DOCS_DIR 在 .env 加载后、按是否 CI 决定（见下方）
 
 
 # ── .env 自动加载（纯标准库，无依赖）──────────────────────────
@@ -43,6 +42,20 @@ def _load_dotenv(path: Path) -> None:
 
 
 _load_dotenv(ROOT / ".env")
+
+# ── 状态文件归属：radar.db 与 docs/ 是【CI 专属产物】──────────────
+# 仅 GitHub Actions(CI) 读写仓库里的 radar.db 与 docs/ 并提交；本地一律改用
+# 独立的 radar.local.db 与 docs_local/（均已 gitignore），从而：
+#   ① 本地改代码/push 永不碰仓库 radar.db / docs → 永不撞这两个文件的冲突；
+#   ② CI 的 seen/pushed/meta 状态在仓库里连续累积，零丢失。
+# RADAR_DB 环境变量可显式覆盖 DB 路径（两端通用）。
+IS_CI = bool(os.environ.get("GITHUB_ACTIONS"))
+_db_override = os.environ.get("RADAR_DB")
+if _db_override:
+    DB_PATH = Path(_db_override)
+else:
+    DB_PATH = (ROOT / "radar.db") if IS_CI else (ROOT / "radar.local.db")
+DOCS_DIR = (ROOT / "docs") if IS_CI else (ROOT / "docs_local")
 
 # ── 打分模型 ──────────────────────────────────────────────────
 SCORE_MODEL = "claude-haiku-4-5-20251001"

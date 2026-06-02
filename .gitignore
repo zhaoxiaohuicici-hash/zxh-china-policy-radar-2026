@@ -6,6 +6,11 @@ venv/
 .DS_Store
 .claude/
 
-# 注意：radar.db 故意【不】忽略 —— 它保存 seen(去重)/pushed(防重复推送)/meta(今日主线、
-# 上次 build 时间) 等跨运行状态。GitHub Actions 每轮把它和 docs/ 一起 commit 回仓库，
-# 这样 CI 无状态环境也能持续去重、不重复轰炸推送。
+# 注意：radar.db 与 docs/ 故意【不】忽略 —— 它们是 GitHub Actions(CI) 专属产物：
+# radar.db 保存 seen(去重)/pushed(防重复推送)/meta 跨运行状态，CI 每轮连同 docs/ 一起
+# commit 回仓库，保证状态连续、不重复轰炸推送。
+# 本地一律改用下面这两个独立产物(见 config.py 的 IS_CI 判断)，从而本地 push 永不撞
+# radar.db / docs 冲突：
+radar.local.db
+radar.local.db-journal
+docs_local/
