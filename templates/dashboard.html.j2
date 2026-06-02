@@ -60,6 +60,15 @@
     color:var(--ink);padding:3px 10px;border-radius:100px}
   .th-jump .tj:hover{border-color:var(--red);color:var(--red)}
 
+  /* 📅 未来看点：紧凑日历清单 */
+  .watch{margin:16px 0 4px}
+  .watchlist{list-style:none}
+  .watch-row{display:flex;gap:11px;align-items:baseline;padding:8px 2px;border-bottom:1px dotted var(--line)}
+  .wdate{font-family:var(--sans);font-size:12px;font-weight:700;color:var(--red);white-space:nowrap;min-width:96px;flex:0 0 auto;font-variant-numeric:tabular-nums}
+  .wtitle{flex:1;font-size:14px;color:var(--ink);text-decoration:none;line-height:1.4}
+  a.wtitle:hover{text-decoration:underline}
+  .wtags{font-family:var(--sans);font-size:10.5px;color:var(--gray);white-space:nowrap}
+
   /* 主题标签筛选（非 sticky） */
   .filters{padding:14px 0 6px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
   .filters .lbl{font-family:var(--sans);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--sub);margin-right:4px}
@@ -185,6 +194,7 @@
   <!-- ① 顶部 sticky 锚点导航 -->
   <nav class="anchornav" id="nav">
     <a href="#thread">今日主线</a>
+    {% if watch %}<a href="#watch">📅 未来看点</a>{% endif %}
     <a href="#high">🔴 高信号</a>
     <a href="#medium" data-open="medium">🟡 值得关注</a>
     <a href="#people" data-open="people">🗣 人在说什么</a>
@@ -199,6 +209,21 @@
     <div class="th-jump"><span class="tj-lbl">📍 跳转</span>
       {% for a in thread_anchors %}<a class="tj" href="#{{ a.aid }}">{{ a.label }}</a>{% endfor %}
     </div>{% endif %}
+  </section>
+  {% endif %}
+
+  {% if watch %}
+  <section id="watch" class="watch">
+    <div class="section-head"><span class="bar" style="color:var(--ink)">📅 未来看点</span><span class="en">What to Watch</span><span class="line"></span></div>
+    <ul class="watchlist">
+      {% for w in watch %}
+      <li class="watch-row">
+        <span class="wdate">{{ w.label }}</span>
+        {% if w.aid %}<a class="wtitle" href="#{{ w.aid }}">{{ w.headline }}</a>{% else %}<span class="wtitle">{{ w.headline }}</span>{% endif %}
+        {% if w.tags %}<span class="wtags">{% for t in w.tags %}#{{ t }}{% if not loop.last %} {% endif %}{% endfor %}</span>{% endif %}
+      </li>
+      {% endfor %}
+    </ul>
   </section>
   {% endif %}
 

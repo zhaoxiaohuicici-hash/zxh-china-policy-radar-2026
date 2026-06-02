@@ -87,6 +87,19 @@ def render(conn=None) -> str:
         # 今日主线下钻 chips → 机构高信号卡
         thread_anchors = [{"aid": it["_aid"], "label": (it["_headline"] or "")[:16]} for it in high][:6]
 
+        # 📅 未来看点：扫描【所有档位】的 key_date，挑出未来日期，按时间近→远
+        watch = []
+        for it in items:
+            wd = _watch_date(it.get("key_date"), now)
+            if wd is None:
+                continue
+            watch.append({
+                "date": wd, "label": it.get("key_date"),
+                "headline": it["_headline"], "tags": it.get("tags") or [],
+                "aid": it.get("_aid") or "",
+            })
+        watch.sort(key=lambda w: w["date"])
+
         env = Environment(
             loader=FileSystemLoader(str(TEMPLATES_DIR)),
             autoescape=select_autoescape(["html", "j2"]),
@@ -104,6 +117,7 @@ def render(conn=None) -> str:
             new_count=new_count,
             daily_thread=daily_thread,
             thread_anchors=thread_anchors,
+            watch=watch,
             generated_full=now.strftime("%Y-%m-%d · %H:%M UTC"),
         )
 
@@ -123,6 +137,34 @@ OLD_DAYS = 60     # 事件日(key_date 推断)早于这么多天 → 标「旧�
 
 _MD = re.compile(r"(\d{1,2})\s*/\s*(\d{1,2})")
 _MD_CN = re.compile(r"(\d{1,2})月(?:(\d{1,2})日)?")
+
+
+_PAST_WORDS = ("签署", "已签", "发布", "落地", "通过", "施行", "已执行")
+_FUTURE_WORDS = ("生效", "截止", "听证", "表决", "到期", "期满", "期限", "启动", "开始")
+
+
+def _watch_date(key_date: str | None, now: datetime) -> datetime | None:
+    """从 key_date 抽【未来】事件日（≥今天）。今年该 M/D 已过→排除；
+    今年 M/D 在未来但措辞是"签署/发布"等过去动作(实为去年旧事)→排除。"""
+    if not key_date:
+        return None
+    m = _MD.search(key_date)
+    if m:
+        mm, dd = int(m.group(1)), int(m.group(2))
+    else:
+        m = _MD_CN.search(key_date)
+        if not m:
+            return None
+        mm, dd = int(m.group(1)), int(m.group(2) or 1)
+    try:
+        cand = datetime(now.year, mm, dd, tzinfo=timezone.utc)
+    except ValueError:
+        return None
+    if cand.date() < now.date():
+        return None  # 今年的该日已过 → 不是未来
+    if any(w in key_date for w in _PAST_WORDS) and not any(w in key_date for w in _FUTURE_WORDS):
+        return None  # "9/5 签署" 这类过去动作 → 排除
+    return cand
 
 
 def _event_date(key_date: str | None, now: datetime) -> datetime | None:

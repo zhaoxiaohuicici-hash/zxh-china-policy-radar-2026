@@ -60,6 +60,15 @@
     color:var(--ink);padding:3px 10px;border-radius:100px}
   .th-jump .tj:hover{border-color:var(--red);color:var(--red)}
 
+  /* 📅 未来看点：紧凑日历清单 */
+  .watch{margin:16px 0 4px}
+  .watchlist{list-style:none}
+  .watch-row{display:flex;gap:11px;align-items:baseline;padding:8px 2px;border-bottom:1px dotted var(--line)}
+  .wdate{font-family:var(--sans);font-size:12px;font-weight:700;color:var(--red);white-space:nowrap;min-width:96px;flex:0 0 auto;font-variant-numeric:tabular-nums}
+  .wtitle{flex:1;font-size:14px;color:var(--ink);text-decoration:none;line-height:1.4}
+  a.wtitle:hover{text-decoration:underline}
+  .wtags{font-family:var(--sans);font-size:10.5px;color:var(--gray);white-space:nowrap}
+
   /* 主题标签筛选（非 sticky） */
   .filters{padding:14px 0 6px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
   .filters .lbl{font-family:var(--sans);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--sub);margin-right:4px}
@@ -173,11 +182,11 @@
     <div class="kicker">独立信号雷达 · 不是新闻聚合</div>
     <h1 class="title">US-CHINA RADAR<span class="cn">中美政策雷达</span></h1>
     <div class="dateline">
-      <span>最后更新 2026-06-02 · 02:17 UTC</span><span class="dot"></span>
+      <span>最后更新 2026-06-02 · 02:45 UTC</span><span class="dot"></span>
       <div class="counts">
         <span class="c-high"><b>3</b> 高</span>
-        <span class="c-med"><b>5</b> 中</span>
-        <span class="c-low"><b>91</b> 低</span>
+        <span class="c-med"><b>4</b> 中</span>
+        <span class="c-low"><b>92</b> 低</span>
       </div>
     </div>
   </header>
@@ -185,6 +194,7 @@
   <!-- ① 顶部 sticky 锚点导航 -->
   <nav class="anchornav" id="nav">
     <a href="#thread">今日主线</a>
+    <a href="#watch">📅 未来看点</a>
     <a href="#high">🔴 高信号</a>
     <a href="#medium" data-open="medium">🟡 值得关注</a>
     <a href="#people" data-open="people">🗣 人在说什么</a>
@@ -199,6 +209,27 @@
     <div class="th-jump"><span class="tj-lbl">📍 跳转</span>
       <a class="tj" href="#sig-0">中国国务院发布出境投资新规，7月</a><a class="tj" href="#sig-1">美国贸易代表发起对越南Secti</a><a class="tj" href="#sig-2">特朗普签署 EO 14346：台</a>
     </div>
+  </section>
+  
+
+  
+  <section id="watch" class="watch">
+    <div class="section-head"><span class="bar" style="color:var(--ink)">📅 未来看点</span><span class="en">What to Watch</span><span class="line"></span></div>
+    <ul class="watchlist">
+      
+      <li class="watch-row">
+        <span class="wdate">7/1 生效</span>
+        <a class="wtitle" href="#sig-0">中国国务院发布出境投资新规，7月1日起施行统一对外投资管理框架</a>
+        <span class="wtags">#出口管制</span>
+      </li>
+      
+      <li class="watch-row">
+        <span class="wdate">7月到期</span>
+        <a class="wtitle" href="#sig-6">第122条款关税7月到期 Greer暗示可能重新实施</a>
+        <span class="wtags">#关税</span>
+      </li>
+      
+    </ul>
   </section>
   
 
@@ -284,47 +315,47 @@
   <section id="medium">
     <div class="section-head"><span class="bar" style="color:var(--amber)">🟡 值得关注</span><span class="en">Worth a Look · 官方/机构</span><span class="line"></span></div>
     <details class="foldblock">
-      <summary>值得关注 5 条 ›</summary>
+      <summary>值得关注 4 条 ›</summary>
       
-  <article class="sig medium" id="sig-3" data-tags="出口管制" data-pt="">
+  <article class="sig medium" id="sig-3" data-tags="华盛顿政治" data-pt="">
     <div class="meta-top">
       <span class="sig-lab medium">中</span>
       <span class="stype st-view">观点</span>
       
-      <span class="fresh">新</span>
+      
       
     </div>
-    <h2 class="sig-h"><a href="https://sinocism.com/p/new-regulations-on-outbound-investment" target="_blank" rel="noopener noreferrer">习近平论未来产业发展；中国收紧对外投资监管；芯片出口管制面临挑战</a></h2>
-    <p class="synopsis">《求是》6月刊刊发习近平关于未来产业发展的文章，源自其1月30日政治局学习会讲话。同期涉及中国对外投资新规、芯片出口管制执行困难、香格里拉对话及中欧关系等多个政策议题。</p>
-    <div class="impact"><b>影响</b>中国对外投资政策调整可能影响中资赴美、赴欧并购审批周期；芯片出口管制执行面临的挑战需关注其对供应链管制实效的影响</div>
-    <div class="who"><span class="who-lbl">涉及</span><span class="person">中国（政策制定）</span><span class="person">欧盟</span><span class="person">美国（间接涉及）</span></div>
+    <h2 class="sig-h"><a href="https://sinocism.com/p/new-regulations-on-outbound-investment" target="_blank" rel="noopener noreferrer">习近平 1月30日政治局学习会：未来产业发展战略地位重大</a></h2>
+    <p class="synopsis">《求是》杂志6月刊刊登习近平1月30日政治局学习会讲话全文，主题为未来产业发展。讲话强调培育发展未来产业对中国具有重大战略意义。该期刊还涵盖对外投资新规、芯片出口管制、香格里拉对话等多项议题。</p>
+    <div class="impact"><b>影响</b>反映中国对新兴产业(AI、先进制造等)优先级提升，值得追踪政策配套细则(税收/融资/监管倾斜)落地，以及与芯片出口管制协调的可能方向。</div>
+    <div class="who"><span class="who-lbl">涉及</span><span class="person">中国</span></div>
     
     <div class="card-foot">
-      <span class="src">Sinocism · 4 小时前 · <a href="https://sinocism.com/p/new-regulations-on-outbound-investment" target="_blank" rel="noopener noreferrer">查看原文 ↗</a></span>
-      <div class="tags"><span class="tag" data-tag="出口管制"># 出口管制</span></div>
+      <span class="src">Sinocism · 5 小时前 · <a href="https://sinocism.com/p/new-regulations-on-outbound-investment" target="_blank" rel="noopener noreferrer">查看原文 ↗</a></span>
+      <div class="tags"><span class="tag" data-tag="华盛顿政治"># 华盛顿政治</span></div>
     </div>
   </article>
   
-  <article class="sig medium" id="sig-4" data-tags="AI,新能源" data-pt="">
+  <article class="sig medium" id="sig-4" data-tags="华盛顿政治" data-pt="">
     <div class="meta-top">
       <span class="sig-lab medium">中</span>
       <span class="stype st-view">观点</span>
       
-      <span class="fresh">新</span>
+      
       
     </div>
-    <h2 class="sig-h"><a href="https://triviumchina.com/2026/06/02/how-to-win-future-industries-and-influence-people/" target="_blank" rel="noopener noreferrer">习近平强调把握未来产业发展对中国至关重要</a></h2>
-    <p class="synopsis">中共中央党刊「求是」发表习近平1月30日政治局集体学习讲话全文，强调中国必须做好未来产业发展。该讲话重申产业竞争战略地位。</p>
-    <div class="impact"><b>影响</b>反映中国在AI、新能源等战略性新兴产业上的政策优先级与国家投资方向调整，美企与中资都应重估这些领域的竞争风险与合作空间</div>
+    <h2 class="sig-h"><a href="https://triviumchina.com/2026/06/02/how-to-win-future-industries-and-influence-people/" target="_blank" rel="noopener noreferrer">求是杂志刊登习近平未来产业政治局学习会讲话</a></h2>
+    <p class="synopsis">《求是》作为党中央理论刊物刊登习近平1月30日政治局学习会关于未来产业发展的完整讲话。讲话核心立场：中国必须在未来产业发展上做对。</p>
+    
     <div class="who"><span class="who-lbl">涉及</span><span class="person">中国</span></div>
     
     <div class="card-foot">
       <span class="src">Trivium China · 6 小时前 · <a href="https://triviumchina.com/2026/06/02/how-to-win-future-industries-and-influence-people/" target="_blank" rel="noopener noreferrer">查看原文 ↗</a></span>
-      <div class="tags"><span class="tag" data-tag="AI"># AI</span><span class="tag" data-tag="新能源"># 新能源</span></div>
+      <div class="tags"><span class="tag" data-tag="华盛顿政治"># 华盛顿政治</span></div>
     </div>
   </article>
   
-  <article class="sig medium" id="sig-5" data-tags="出口管制" data-pt="">
+  <article class="sig medium" id="sig-5" data-tags="关税" data-pt="">
     <div class="meta-top">
       <span class="sig-lab medium">中</span>
       <span class="stype st-media">媒体</span>
@@ -332,14 +363,14 @@
       <span class="fresh">新</span>
       
     </div>
-    <h2 class="sig-h"><a href="https://news.google.com/rss/articles/CBMiswFBVV95cUxQR2N5RnRfS2ZCUjNEXzdGM21rdEM4VnZUdVNwRnJHQ0hxZXdaZGZkbl9pQjJ6MGhoa0pKRXJ2TERBZTh2eUl5T1FyWkVhLXpNMlJzdFVnZ3MwRmdJNTlNSlRWQmdoTjlPVzI3bjhlLVpEazl2elFhZklmWktJbmppdnd4QVlya2dOVW9xYlJzVWhPeVF4Nk4wNG9ZaXVvakY4Szk2cWZmbmJfNXE4UGZ5b3dEaw?oc=5" target="_blank" rel="noopener noreferrer">美国调查越南知识产权保护实践</a></h2>
-    <p class="synopsis">美国贸易代表办公室对越南的知识产权保护做法启动调查。虽针对越南，但该国系关键芯片/供应链节点，可能涉及中资代工及转口审查。</p>
-    <div class="impact"><b>影响</b>关注越南作为中美供应链枢纽的审查升级，中资及代工企业可能面临更严的知产与合规要求</div>
+    <h2 class="sig-h"><a href="https://news.google.com/rss/articles/CBMiswFBVV95cUxQR2N5RnRfS2ZCUjNEXzdGM21rdEM4VnZUdVNwRnJHQ0hxZXdaZGZkbl9pQjJ6MGhoa0pKRXJ2TERBZTh2eUl5T1FyWkVhLXpNMlJzdFVnZ3MwRmdJNTlNSlRWQmdoTjlPVzI3bjhlLVpEazl2elFhZklmWktJbmppdnd4QVlya2dOVW9xYlJzVWhPeVF4Nk4wNG9ZaXVvakY4Szk2cWZmbmJfNXE4UGZ5b3dEaw?oc=5" target="_blank" rel="noopener noreferrer">美国启动越南知识产权保护调查</a></h2>
+    <p class="synopsis">美国贸易代表办公室启动针对越南知识产权保护实践的调查。此举作为美国贸易执法工具，可能为后续关税或贸易救济措施奠基。</p>
+    <div class="impact"><b>影响</b>越南、东南亚供应链企业需关注美国可能的贸易制裁预期；中资转口/代工越南的企业应评估该调查是否与供应链规避审查相关。</div>
     <div class="who"><span class="who-lbl">涉及</span><span class="person">越南</span></div>
     
     <div class="card-foot">
       <span class="src">USTR Press · 2 天前 · <a href="https://news.google.com/rss/articles/CBMiswFBVV95cUxQR2N5RnRfS2ZCUjNEXzdGM21rdEM4VnZUdVNwRnJHQ0hxZXdaZGZkbl9pQjJ6MGhoa0pKRXJ2TERBZTh2eUl5T1FyWkVhLXpNMlJzdFVnZ3MwRmdJNTlNSlRWQmdoTjlPVzI3bjhlLVpEazl2elFhZklmWktJbmppdnd4QVlya2dOVW9xYlJzVWhPeVF4Nk4wNG9ZaXVvakY4Szk2cWZmbmJfNXE4UGZ5b3dEaw?oc=5" target="_blank" rel="noopener noreferrer">查看原文 ↗</a></span>
-      <div class="tags"><span class="tag" data-tag="出口管制"># 出口管制</span></div>
+      <div class="tags"><span class="tag" data-tag="关税"># 关税</span></div>
     </div>
   </article>
   
@@ -351,28 +382,9 @@
       <span class="fresh">新</span>
       
     </div>
-    <h2 class="sig-h"><a href="https://news.google.com/rss/articles/CBMioAFBVV95cUxOOFlJRVE1YzFrOHlkbE5fMHROR1lDdGdjTHlGNWJBMG91Q0U2MnVXSU1Ed0FBYlUxakt4UUd1WGdFRnRsYVpfSUwtbTNVbVN3TGN0cUlyTHlWckJVNVZSWGdJR2QyZm5ITUtHVDl6ejhEaDRIRzJ0cjU1bVBuMUFsU3RRcTZ0Z2h6UlB6d240NDRzYXVXZjlqbWJsT0xvcmJp?oc=5" target="_blank" rel="noopener noreferrer">美USTR暗示可能重新实施10%普遍关税</a></h2>
-    <p class="synopsis">据报道，美国USTR释放信号暗示可能重新实施10%的普遍关税。</p>
-    <div class="impact"><b>影响</b>如若重启普遍关税，将直接涉及对华商品进口成本上升，中资出口企业应密切关注政策正式定调前的谈判动向。</div>
-    
-    
-    <div class="card-foot">
-      <span class="src">USTR Press · 5 天前 · <a href="https://news.google.com/rss/articles/CBMioAFBVV95cUxOOFlJRVE1YzFrOHlkbE5fMHROR1lDdGdjTHlGNWJBMG91Q0U2MnVXSU1Ed0FBYlUxakt4UUd1WGdFRnRsYVpfSUwtbTNVbVN3TGN0cUlyTHlWckJVNVZSWGdJR2QyZm5ITUtHVDl6ejhEaDRIRzJ0cjU1bVBuMUFsU3RRcTZ0Z2h6UlB6d240NDRzYXVXZjlqbWJsT0xvcmJp?oc=5" target="_blank" rel="noopener noreferrer">查看原文 ↗</a></span>
-      <div class="tags"><span class="tag" data-tag="关税"># 关税</span></div>
-    </div>
-  </article>
-  
-  <article class="sig medium" id="sig-7" data-tags="关税" data-pt="">
-    <div class="meta-top">
-      <span class="sig-lab medium">中</span>
-      <span class="stype st-media">媒体</span>
-      <span class="rumor">未证实</span>
-      <span class="fresh">新</span>
-      
-    </div>
-    <h2 class="sig-h"><a href="https://news.google.com/rss/articles/CBMiZEFVX3lxTFBXUVNYc1RTSVQtajkyWVVHQ3RrbC00bllQdm5UdzVpSjZRa3Z3Y2FLak1VQ3ZGYzRZWHV1bXZQamIzeEFYeGVvZ0FCeC1IWUNybHk1UmpleExnblNCSmJCRnczSnQ?oc=5" target="_blank" rel="noopener noreferrer">Section 122关税7月到期，USTR暗示可能重新实施</a></h2>
-    <p class="synopsis">美国Section 122关税将于7月到期。USTR官员Greer暗示可能重新实施该关税。</p>
-    <div class="impact"><b>影响</b>Section 122关税动向不确定，相关商品进口企业应为重启做准备，监测官方正式宣布时间。</div>
+    <h2 class="sig-h"><a href="https://news.google.com/rss/articles/CBMiZEFVX3lxTFBXUVNYc1RTSVQtajkyWVVHQ3RrbC00bllQdm5UdzVpSjZRa3Z3Y2FLak1VQ3ZGYzRZWHV1bXZQamIzeEFYeGVvZ0FCeC1IWUNybHk1UmpleExnblNCSmJCRnczSnQ?oc=5" target="_blank" rel="noopener noreferrer">第122条款关税7月到期 Greer暗示可能重新实施</a></h2>
+    <p class="synopsis">美国贸易代表Greer暗示美国可能重新实施将于7月过期的第122条款关税。措辞属未定调可能性，具体条款与行业覆盖范围待观察。</p>
+    <div class="impact"><b>影响</b>受第122条款覆盖的进口商(特别是对华采购链)应在7月前制定应急预案，核查现有关税豁免状态，评估成本上行的传导时间表。</div>
     
     
     <div class="card-foot">
@@ -398,7 +410,7 @@
     
       <div class="pgroup-lbl">高信号 · 6 条</div>
       
-  <article class="sig high" id="sig-8" data-tags="AI,出口管制" data-pt="reporter">
+  <article class="sig high" id="sig-7" data-tags="AI,出口管制" data-pt="reporter">
     <div class="meta-top">
       <span class="sig-lab high">高</span>
       <span class="stype st-person">💬观点 · 华尔街日报 首席中国记者</span>
@@ -414,12 +426,12 @@
     
     <div class="soval"><span class="soval-lbl">📌 研判</span>中资AI企业需核查是否已启动对美融资的ODI/外汇申报备案暂停，评估未获批情况下现有美资股权的合规风险与潜在清理成本。</div>
     <div class="card-foot">
-      <span class="src">Lingling Wei · 12 小时前 · <a href="https://x.com/Lingling_Wei/status/2061437783382581487" target="_blank" rel="noopener noreferrer">查看原文 ↗</a></span>
+      <span class="src">Lingling Wei · 13 小时前 · <a href="https://x.com/Lingling_Wei/status/2061437783382581487" target="_blank" rel="noopener noreferrer">查看原文 ↗</a></span>
       <div class="tags"><span class="tag" data-tag="AI"># AI</span><span class="tag" data-tag="出口管制"># 出口管制</span></div>
     </div>
   </article>
   
-  <article class="sig high" id="sig-9" data-tags="华盛顿政治" data-pt="reporter">
+  <article class="sig high" id="sig-8" data-tags="华盛顿政治" data-pt="reporter">
     <div class="meta-top">
       <span class="sig-lab high">高</span>
       <span class="stype st-person">💬观点 · 华尔街日报 首席中国记者</span>
@@ -440,7 +452,7 @@
     </div>
   </article>
   
-  <article class="sig high" id="sig-10" data-tags="制裁金融,高层互动" data-pt="scholar">
+  <article class="sig high" id="sig-9" data-tags="制裁金融,高层互动" data-pt="scholar">
     <div class="meta-top">
       <span class="sig-lab high">高</span>
       <span class="stype st-person">💬观点 · CFR 中国战略/乔治城</span>
@@ -461,7 +473,7 @@
     </div>
   </article>
   
-  <article class="sig high" id="sig-11" data-tags="制裁金融,高层互动" data-pt="scholar">
+  <article class="sig high" id="sig-10" data-tags="制裁金融,高层互动" data-pt="scholar">
     <div class="meta-top">
       <span class="sig-lab high">高</span>
       <span class="stype st-person">💬观点 · CFR 中国战略/乔治城</span>
@@ -482,7 +494,7 @@
     </div>
   </article>
   
-  <article class="sig high" id="sig-12" data-tags="关税" data-pt="reporter">
+  <article class="sig high" id="sig-11" data-tags="关税" data-pt="reporter">
     <div class="meta-top">
       <span class="sig-lab high">高</span>
       <span class="stype st-person">💬观点 · 华尔街日报 贸易记者</span>
@@ -503,7 +515,7 @@
     </div>
   </article>
   
-  <article class="sig high" id="sig-13" data-tags="高层互动" data-pt="scholar">
+  <article class="sig high" id="sig-12" data-tags="高层互动" data-pt="scholar">
     <div class="meta-top">
       <span class="sig-lab high">高</span>
       <span class="stype st-person">💬观点 · CFR 中国战略/乔治城</span>
@@ -529,7 +541,7 @@
       <details class="pgroup">
         <summary>中信号 44 条 ›</summary>
         
-  <article class="sig medium" id="sig-14" data-tags="关税" data-pt="scholar">
+  <article class="sig medium" id="sig-13" data-tags="关税" data-pt="scholar">
     <div class="meta-top">
       <span class="sig-lab medium">中</span>
       <span class="stype st-person">💬观点 · CFR 高级研究员</span>
@@ -550,7 +562,7 @@
     </div>
   </article>
   
-  <article class="sig medium" id="sig-15" data-tags="出口管制" data-pt="reporter">
+  <article class="sig medium" id="sig-14" data-tags="出口管制" data-pt="reporter">
     <div class="meta-top">
       <span class="sig-lab medium">中</span>
       <span class="stype st-person">💬观点 · Politico 外交记者</span>
@@ -566,12 +578,12 @@
     
     
     <div class="card-foot">
-      <span class="src">Phelim Kine · 2 小时前 · <a href="https://x.com/PhelimKine/status/2061592456936788343" target="_blank" rel="noopener noreferrer">查看原文 ↗</a></span>
+      <span class="src">Phelim Kine · 3 小时前 · <a href="https://x.com/PhelimKine/status/2061592456936788343" target="_blank" rel="noopener noreferrer">查看原文 ↗</a></span>
       <div class="tags"><span class="tag" data-tag="出口管制"># 出口管制</span></div>
     </div>
   </article>
   
-  <article class="sig medium" id="sig-16" data-tags="AI" data-pt="scholar">
+  <article class="sig medium" id="sig-15" data-tags="AI" data-pt="scholar">
     <div class="meta-top">
       <span class="sig-lab medium">中</span>
       <span class="stype st-person">💬观点 · DGA-Albright 科技政策</span>
@@ -592,7 +604,7 @@
     </div>
   </article>
   
-  <article class="sig medium" id="sig-17" data-tags="关税" data-pt="scholar">
+  <article class="sig medium" id="sig-16" data-tags="关税" data-pt="scholar">
     <div class="meta-top">
       <span class="sig-lab medium">中</span>
       <span class="stype st-person">💬观点 · CFR 高级研究员</span>
@@ -613,7 +625,7 @@
     </div>
   </article>
   
-  <article class="sig medium" id="sig-18" data-tags="关税" data-pt="scholar">
+  <article class="sig medium" id="sig-17" data-tags="关税" data-pt="scholar">
     <div class="meta-top">
       <span class="sig-lab medium">中</span>
       <span class="stype st-person">💬观点 · CFR 高级研究员</span>
@@ -629,12 +641,12 @@
     
     
     <div class="card-foot">
-      <span class="src">Brad Setser · 4 小时前 · <a href="https://x.com/Brad_Setser/status/2061561721911676959" target="_blank" rel="noopener noreferrer">查看原文 ↗</a></span>
+      <span class="src">Brad Setser · 5 小时前 · <a href="https://x.com/Brad_Setser/status/2061561721911676959" target="_blank" rel="noopener noreferrer">查看原文 ↗</a></span>
       <div class="tags"><span class="tag" data-tag="关税"># 关税</span></div>
     </div>
   </article>
   
-  <article class="sig medium" id="sig-19" data-tags="AI" data-pt="scholar">
+  <article class="sig medium" id="sig-18" data-tags="AI" data-pt="scholar">
     <div class="meta-top">
       <span class="sig-lab medium">中</span>
       <span class="stype st-person">💬观点 · DGA-Albright 科技政策</span>
@@ -655,7 +667,7 @@
     </div>
   </article>
   
-  <article class="sig medium" id="sig-20" data-tags="出口管制" data-pt="scholar">
+  <article class="sig medium" id="sig-19" data-tags="出口管制" data-pt="scholar">
     <div class="meta-top">
       <span class="sig-lab medium">中</span>
       <span class="stype st-person">💬观点 · DGA-Albright 科技政策</span>
@@ -671,12 +683,12 @@
     
     
     <div class="card-foot">
-      <span class="src">Paul Triolo · 5 小时前 · <a href="https://x.com/pstAsiatech/status/2061545380211499185" target="_blank" rel="noopener noreferrer">查看原文 ↗</a></span>
+      <span class="src">Paul Triolo · 6 小时前 · <a href="https://x.com/pstAsiatech/status/2061545380211499185" target="_blank" rel="noopener noreferrer">查看原文 ↗</a></span>
       <div class="tags"><span class="tag" data-tag="出口管制"># 出口管制</span></div>
     </div>
   </article>
   
-  <article class="sig medium" id="sig-21" data-tags="关税" data-pt="scholar">
+  <article class="sig medium" id="sig-20" data-tags="关税" data-pt="scholar">
     <div class="meta-top">
       <span class="sig-lab medium">中</span>
       <span class="stype st-person">💬观点 · CFR 高级研究员</span>
@@ -697,7 +709,7 @@
     </div>
   </article>
   
-  <article class="sig medium" id="sig-22" data-tags="AI" data-pt="reporter">
+  <article class="sig medium" id="sig-21" data-tags="AI" data-pt="reporter">
     <div class="meta-top">
       <span class="sig-lab medium">中</span>
       <span class="stype st-person">💬观点 · 金融时报 美中记者</span>
@@ -718,7 +730,7 @@
     </div>
   </article>
   
-  <article class="sig medium" id="sig-23" data-tags="关税" data-pt="scholar">
+  <article class="sig medium" id="sig-22" data-tags="关税" data-pt="scholar">
     <div class="meta-top">
       <span class="sig-lab medium">中</span>
       <span class="stype st-person">💬观点 · CFR 高级研究员</span>
@@ -739,7 +751,7 @@
     </div>
   </article>
   
-  <article class="sig medium" id="sig-24" data-tags="出口管制,AI" data-pt="scholar">
+  <article class="sig medium" id="sig-23" data-tags="出口管制,AI" data-pt="scholar">
     <div class="meta-top">
       <span class="sig-lab medium">中</span>
       <span class="stype st-person">💬观点 · DGA-Albright 科技政策</span>
@@ -755,12 +767,12 @@
     
     
     <div class="card-foot">
-      <span class="src">Paul Triolo · 9 小时前 · <a href="https://x.com/pstAsiatech/status/2061483422413971840" target="_blank" rel="noopener noreferrer">查看原文 ↗</a></span>
+      <span class="src">Paul Triolo · 10 小时前 · <a href="https://x.com/pstAsiatech/status/2061483422413971840" target="_blank" rel="noopener noreferrer">查看原文 ↗</a></span>
       <div class="tags"><span class="tag" data-tag="出口管制"># 出口管制</span><span class="tag" data-tag="AI"># AI</span></div>
     </div>
   </article>
   
-  <article class="sig medium" id="sig-25" data-tags="出口管制,AI" data-pt="scholar">
+  <article class="sig medium" id="sig-24" data-tags="出口管制,AI" data-pt="scholar">
     <div class="meta-top">
       <span class="sig-lab medium">中</span>
       <span class="stype st-person">💬观点 · DGA-Albright 科技政策</span>
@@ -781,7 +793,7 @@
     </div>
   </article>
   
-  <article class="sig medium" id="sig-26" data-tags="出口管制,AI" data-pt="scholar">
+  <article class="sig medium" id="sig-25" data-tags="出口管制,AI" data-pt="scholar">
     <div class="meta-top">
       <span class="sig-lab medium">中</span>
       <span class="stype st-person">💬观点 · DGA-Albright 科技政策</span>
@@ -802,7 +814,7 @@
     </div>
   </article>
   
-  <article class="sig medium" id="sig-27" data-tags="华盛顿政治" data-pt="reporter">
+  <article class="sig medium" id="sig-26" data-tags="华盛顿政治" data-pt="reporter">
     <div class="meta-top">
       <span class="sig-lab medium">中</span>
       <span class="stype st-person">💬观点 · 彭博电视 首席政治记者</span>
@@ -818,12 +830,12 @@
     
     
     <div class="card-foot">
-      <span class="src">Annmarie Hordern · 16 小时前 · <a href="https://x.com/annmarie/status/2061382896586309864" target="_blank" rel="noopener noreferrer">查看原文 ↗</a></span>
+      <span class="src">Annmarie Hordern · 17 小时前 · <a href="https://x.com/annmarie/status/2061382896586309864" target="_blank" rel="noopener noreferrer">查看原文 ↗</a></span>
       <div class="tags"><span class="tag" data-tag="华盛顿政治"># 华盛顿政治</span></div>
     </div>
   </article>
   
-  <article class="sig medium" id="sig-28" data-tags="出口管制,AI" data-pt="reporter">
+  <article class="sig medium" id="sig-27" data-tags="出口管制,AI" data-pt="reporter">
     <div class="meta-top">
       <span class="sig-lab medium">中</span>
       <span class="stype st-person">💬观点 · 彭博电视 首席政治记者</span>
@@ -839,12 +851,12 @@
     
     
     <div class="card-foot">
-      <span class="src">Annmarie Hordern · 16 小时前 · <a href="https://x.com/annmarie/status/2061377642096476504" target="_blank" rel="noopener noreferrer">查看原文 ↗</a></span>
+      <span class="src">Annmarie Hordern · 17 小时前 · <a href="https://x.com/annmarie/status/2061377642096476504" target="_blank" rel="noopener noreferrer">查看原文 ↗</a></span>
       <div class="tags"><span class="tag" data-tag="出口管制"># 出口管制</span><span class="tag" data-tag="AI"># AI</span></div>
     </div>
   </article>
   
-  <article class="sig medium" id="sig-29" data-tags="关税" data-pt="vcind">
+  <article class="sig medium" id="sig-28" data-tags="关税" data-pt="vcind">
     <div class="meta-top">
       <span class="sig-lab medium">中</span>
       <span class="stype st-person">💬观点 · 布鲁金斯研究员</span>
@@ -865,7 +877,7 @@
     </div>
   </article>
   
-  <article class="sig medium" id="sig-30" data-tags="医药" data-pt="vcind">
+  <article class="sig medium" id="sig-29" data-tags="医药" data-pt="vcind">
     <div class="meta-top">
       <span class="sig-lab medium">中</span>
       <span class="stype st-person">💬观点 · 布鲁金斯研究员</span>
@@ -881,12 +893,12 @@
     
     
     <div class="card-foot">
-      <span class="src">Kyle Chan · 23 小时前 · <a href="https://x.com/kyleichan/status/2061274984786416042" target="_blank" rel="noopener noreferrer">查看原文 ↗</a></span>
+      <span class="src">Kyle Chan · 1 天前 · <a href="https://x.com/kyleichan/status/2061274984786416042" target="_blank" rel="noopener noreferrer">查看原文 ↗</a></span>
       <div class="tags"><span class="tag" data-tag="医药"># 医药</span></div>
     </div>
   </article>
   
-  <article class="sig medium" id="sig-31" data-tags="华盛顿政治" data-pt="reporter">
+  <article class="sig medium" id="sig-30" data-tags="华盛顿政治" data-pt="reporter">
     <div class="meta-top">
       <span class="sig-lab medium">中</span>
       <span class="stype st-person">💬观点 · 金融时报 美中记者</span>
@@ -907,7 +919,7 @@
     </div>
   </article>
   
-  <article class="sig medium" id="sig-32" data-tags="出口管制" data-pt="reporter">
+  <article class="sig medium" id="sig-31" data-tags="出口管制" data-pt="reporter">
     <div class="meta-top">
       <span class="sig-lab medium">中</span>
       <span class="stype st-person">💬观点 · 金融时报 美中记者</span>
@@ -928,7 +940,7 @@
     </div>
   </article>
   
-  <article class="sig medium" id="sig-33" data-tags="关税" data-pt="scholar">
+  <article class="sig medium" id="sig-32" data-tags="关税" data-pt="scholar">
     <div class="meta-top">
       <span class="sig-lab medium">中</span>
       <span class="stype st-person">💬观点 · PIIE 高级研究员</span>
@@ -949,7 +961,7 @@
     </div>
   </article>
   
-  <article class="sig medium" id="sig-34" data-tags="出口管制,AI" data-pt="vcind">
+  <article class="sig medium" id="sig-33" data-tags="出口管制,AI" data-pt="vcind">
     <div class="meta-top">
       <span class="sig-lab medium">中</span>
       <span class="stype st-person">💬观点 · 布鲁金斯研究员</span>
@@ -970,7 +982,7 @@
     </div>
   </article>
   
-  <article class="sig medium" id="sig-35" data-tags="关税" data-pt="scholar">
+  <article class="sig medium" id="sig-34" data-tags="关税" data-pt="scholar">
     <div class="meta-top">
       <span class="sig-lab medium">中</span>
       <span class="stype st-person">💬观点 · PIIE 高级研究员</span>
@@ -991,7 +1003,7 @@
     </div>
   </article>
   
-  <article class="sig medium" id="sig-36" data-tags="AI" data-pt="vcind">
+  <article class="sig medium" id="sig-35" data-tags="AI" data-pt="vcind">
     <div class="meta-top">
       <span class="sig-lab medium">中</span>
       <span class="stype st-person">💬观点 · 天使投资人/All-In 播客</span>
@@ -1007,12 +1019,12 @@
     
     
     <div class="card-foot">
-      <span class="src">Jason Calacanis · 1 天前 · <a href="https://x.com/Jason/status/2060911746295218341" target="_blank" rel="noopener noreferrer">查看原文 ↗</a></span>
+      <span class="src">Jason Calacanis · 2 天前 · <a href="https://x.com/Jason/status/2060911746295218341" target="_blank" rel="noopener noreferrer">查看原文 ↗</a></span>
       <div class="tags"><span class="tag" data-tag="AI"># AI</span></div>
     </div>
   </article>
   
-  <article class="sig medium" id="sig-37" data-tags="AI" data-pt="vcind">
+  <article class="sig medium" id="sig-36" data-tags="AI" data-pt="vcind">
     <div class="meta-top">
       <span class="sig-lab medium">中</span>
       <span class="stype st-person">💬观点 · 白宫 AI 与加密事务主管</span>
@@ -1033,7 +1045,7 @@
     </div>
   </article>
   
-  <article class="sig medium" id="sig-38" data-tags="AI" data-pt="vcind">
+  <article class="sig medium" id="sig-37" data-tags="AI" data-pt="vcind">
     <div class="meta-top">
       <span class="sig-lab medium">中</span>
       <span class="stype st-person">💬观点 · Benchmark 风投</span>
@@ -1054,7 +1066,7 @@
     </div>
   </article>
   
-  <article class="sig medium" id="sig-39" data-tags="医药" data-pt="vcind">
+  <article class="sig medium" id="sig-38" data-tags="医药" data-pt="vcind">
     <div class="meta-top">
       <span class="sig-lab medium">中</span>
       <span class="stype st-person">💬观点 · 布鲁金斯研究员</span>
@@ -1075,7 +1087,7 @@
     </div>
   </article>
   
-  <article class="sig medium" id="sig-40" data-tags="AI" data-pt="vcind">
+  <article class="sig medium" id="sig-39" data-tags="AI" data-pt="vcind">
     <div class="meta-top">
       <span class="sig-lab medium">中</span>
       <span class="stype st-person">💬观点 · Benchmark 风投</span>
@@ -1096,7 +1108,7 @@
     </div>
   </article>
   
-  <article class="sig medium" id="sig-41" data-tags="关税" data-pt="scholar">
+  <article class="sig medium" id="sig-40" data-tags="关税" data-pt="scholar">
     <div class="meta-top">
       <span class="sig-lab medium">中</span>
       <span class="stype st-person">💬观点 · CFR 高级研究员</span>
@@ -1117,7 +1129,7 @@
     </div>
   </article>
   
-  <article class="sig medium" id="sig-42" data-tags="关税" data-pt="scholar">
+  <article class="sig medium" id="sig-41" data-tags="关税" data-pt="scholar">
     <div class="meta-top">
       <span class="sig-lab medium">中</span>
       <span class="stype st-person">💬观点 · CFR 高级研究员</span>
@@ -1138,7 +1150,7 @@
     </div>
   </article>
   
-  <article class="sig medium" id="sig-43" data-tags="AI" data-pt="vcind">
+  <article class="sig medium" id="sig-42" data-tags="AI" data-pt="vcind">
     <div class="meta-top">
       <span class="sig-lab medium">中</span>
       <span class="stype st-person">💬观点 · 布鲁金斯研究员</span>
@@ -1159,7 +1171,7 @@
     </div>
   </article>
   
-  <article class="sig medium" id="sig-44" data-tags="AI" data-pt="vcind">
+  <article class="sig medium" id="sig-43" data-tags="AI" data-pt="vcind">
     <div class="meta-top">
       <span class="sig-lab medium">中</span>
       <span class="stype st-person">💬观点 · 布鲁金斯研究员</span>
@@ -1180,7 +1192,7 @@
     </div>
   </article>
   
-  <article class="sig medium" id="sig-45" data-tags="华盛顿政治" data-pt="reporter">
+  <article class="sig medium" id="sig-44" data-tags="华盛顿政治" data-pt="reporter">
     <div class="meta-top">
       <span class="sig-lab medium">中</span>
       <span class="stype st-person">💬观点 · 纽约时报 贸易记者</span>
@@ -1201,7 +1213,7 @@
     </div>
   </article>
   
-  <article class="sig medium" id="sig-46" data-tags="AI" data-pt="vcind">
+  <article class="sig medium" id="sig-45" data-tags="AI" data-pt="vcind">
     <div class="meta-top">
       <span class="sig-lab medium">中</span>
       <span class="stype st-person">💬观点 · 白宫 AI 与加密事务主管</span>
@@ -1222,7 +1234,7 @@
     </div>
   </article>
   
-  <article class="sig medium" id="sig-47" data-tags="华盛顿政治,高层互动" data-pt="scholar">
+  <article class="sig medium" id="sig-46" data-tags="华盛顿政治,高层互动" data-pt="scholar">
     <div class="meta-top">
       <span class="sig-lab medium">中</span>
       <span class="stype st-person">💬观点 · CSIS 中国商业/经济</span>
@@ -1243,7 +1255,7 @@
     </div>
   </article>
   
-  <article class="sig medium" id="sig-48" data-tags="AI" data-pt="scholar">
+  <article class="sig medium" id="sig-47" data-tags="AI" data-pt="scholar">
     <div class="meta-top">
       <span class="sig-lab medium">中</span>
       <span class="stype st-person">💬观点 · PIIE 高级研究员</span>
@@ -1264,7 +1276,7 @@
     </div>
   </article>
   
-  <article class="sig medium" id="sig-49" data-tags="AI" data-pt="reporter">
+  <article class="sig medium" id="sig-48" data-tags="AI" data-pt="reporter">
     <div class="meta-top">
       <span class="sig-lab medium">中</span>
       <span class="stype st-person">💬观点 · 华尔街日报 首席中国记者</span>
@@ -1285,7 +1297,7 @@
     </div>
   </article>
   
-  <article class="sig medium" id="sig-50" data-tags="" data-pt="reporter">
+  <article class="sig medium" id="sig-49" data-tags="" data-pt="reporter">
     <div class="meta-top">
       <span class="sig-lab medium">中</span>
       <span class="stype st-person">💬观点 · 华尔街日报 首席中国记者</span>
@@ -1306,7 +1318,7 @@
     </div>
   </article>
   
-  <article class="sig medium" id="sig-51" data-tags="AI" data-pt="scholar">
+  <article class="sig medium" id="sig-50" data-tags="AI" data-pt="scholar">
     <div class="meta-top">
       <span class="sig-lab medium">中</span>
       <span class="stype st-person">💬观点 · PIIE 高级研究员</span>
@@ -1327,7 +1339,7 @@
     </div>
   </article>
   
-  <article class="sig medium" id="sig-52" data-tags="AI" data-pt="vcind">
+  <article class="sig medium" id="sig-51" data-tags="AI" data-pt="vcind">
     <div class="meta-top">
       <span class="sig-lab medium">中</span>
       <span class="stype st-person">💬观点 · 白宫 AI 与加密事务主管</span>
@@ -1348,7 +1360,7 @@
     </div>
   </article>
   
-  <article class="sig medium" id="sig-53" data-tags="AI" data-pt="reporter">
+  <article class="sig medium" id="sig-52" data-tags="AI" data-pt="reporter">
     <div class="meta-top">
       <span class="sig-lab medium">中</span>
       <span class="stype st-person">💬观点 · 华尔街日报 首席中国记者</span>
@@ -1369,7 +1381,7 @@
     </div>
   </article>
   
-  <article class="sig medium" id="sig-54" data-tags="出口管制,高层互动" data-pt="scholar">
+  <article class="sig medium" id="sig-53" data-tags="出口管制,高层互动" data-pt="scholar">
     <div class="meta-top">
       <span class="sig-lab medium">中</span>
       <span class="stype st-person">💬观点 · CSIS 中国商业/经济</span>
@@ -1390,7 +1402,7 @@
     </div>
   </article>
   
-  <article class="sig medium" id="sig-55" data-tags="AI" data-pt="vcind">
+  <article class="sig medium" id="sig-54" data-tags="AI" data-pt="vcind">
     <div class="meta-top">
       <span class="sig-lab medium">中</span>
       <span class="stype st-person">💬观点 · Benchmark 风投</span>
@@ -1411,7 +1423,7 @@
     </div>
   </article>
   
-  <article class="sig medium" id="sig-56" data-tags="华盛顿政治,高层互动" data-pt="scholar">
+  <article class="sig medium" id="sig-55" data-tags="华盛顿政治,高层互动" data-pt="scholar">
     <div class="meta-top">
       <span class="sig-lab medium">中</span>
       <span class="stype st-person">💬观点 · CSIS 中国商业/经济</span>
@@ -1432,7 +1444,7 @@
     </div>
   </article>
   
-  <article class="sig medium" id="sig-57" data-tags="出口管制,AI" data-pt="scholar">
+  <article class="sig medium" id="sig-56" data-tags="出口管制,AI" data-pt="scholar">
     <div class="meta-top">
       <span class="sig-lab medium">中</span>
       <span class="stype st-person">💬观点 · CSIS 中国商业/经济</span>
@@ -1467,7 +1479,7 @@
     </div>
     <a class="pone" href="https://x.com/chamath/status/2061588836510265638" target="_blank" rel="noopener noreferrer">AI治理与控制平面成为未来重点话题</a>
     <div class="prow3">
-      <span class="ptime">2 小时前</span>
+      <span class="ptime">3 小时前</span>
       <span class="tag" data-tag="AI"># AI</span>
       <span class="plab low">低</span>
     </div>
@@ -1495,7 +1507,7 @@
     </div>
     <a class="pone" href="https://x.com/ChorzempaMartin/status/2061563094544072838" target="_blank" rel="noopener noreferrer">So interesting Xi does not have generative AI on “main thrust for the next 5 years” top six technologies list, instead:…</a>
     <div class="prow3">
-      <span class="ptime">4 小时前</span>
+      <span class="ptime">5 小时前</span>
       
       <span class="plab low">低</span>
     </div>
@@ -1523,7 +1535,7 @@
     </div>
     <a class="pone" href="https://x.com/pstAsiatech/status/2061482806161654093" target="_blank" rel="noopener noreferrer">分析师：Vera CPU 的战略框架意义超过芯片本身价值</a>
     <div class="prow3">
-      <span class="ptime">9 小时前</span>
+      <span class="ptime">10 小时前</span>
       <span class="tag" data-tag="AI"># AI</span>
       <span class="plab low">低</span>
     </div>
@@ -1579,7 +1591,7 @@
     </div>
     <a class="pone" href="https://x.com/annmarie/status/2061378128593756367" target="_blank" rel="noopener noreferrer">伊朗议会议长称以色列在黎巴嫩升级与海军封锁违反停火协议</a>
     <div class="prow3">
-      <span class="ptime">16 小时前</span>
+      <span class="ptime">17 小时前</span>
       
       <span class="plab low">低</span>
     </div>
@@ -1593,7 +1605,7 @@
     </div>
     <a class="pone" href="https://x.com/annmarie/status/2061376786995229072" target="_blank" rel="noopener noreferrer">美联储主席鲍威尔警告：行政权干预美联储独立性风险</a>
     <div class="prow3">
-      <span class="ptime">16 小时前</span>
+      <span class="ptime">17 小时前</span>
       
       <span class="plab low">低</span>
     </div>
@@ -1635,7 +1647,7 @@
     </div>
     <a class="pone" href="https://x.com/AsiaLens/status/2061274131698450552" target="_blank" rel="noopener noreferrer">软银超越丰田成日本最大上市公司</a>
     <div class="prow3">
-      <span class="ptime">23 小时前</span>
+      <span class="ptime">1 天前</span>
       
       <span class="plab low">低</span>
     </div>
@@ -1916,7 +1928,7 @@
   
   <section id="low">
     <details class="low">
-      <summary>⚪ 低信号(机构) · 91 条（多为转述、旧闻或与中美经贸无关）</summary>
+      <summary>⚪ 低信号(机构) · 92 条（多为转述、旧闻或与中美经贸无关）</summary>
       
       <div class="low-item" data-tags="">
         <span class="src">OFAC Recent Actions ·</span>
@@ -2341,6 +2353,12 @@
       <div class="low-item" data-tags="">
         <span class="src">ChinaTalk ·</span>
         <span class="lt"><a href="https://www.chinatalk.media/p/chinas-father-of-robotics" target="_blank" rel="noopener noreferrer">China&#39;s Robotics Dream Began in 1972</a> — 中国机器人产业历史回顾,非当前政策信号 <span class="fresh">新</span></span>
+        
+      </div>
+      
+      <div class="low-item" data-tags="">
+        <span class="src">USTR Press ·</span>
+        <span class="lt"><a href="https://news.google.com/rss/articles/CBMioAFBVV95cUxOOFlJRVE1YzFrOHlkbE5fMHROR1lDdGdjTHlGNWJBMG91Q0U2MnVXSU1Ed0FBYlUxakt4UUd1WGdFRnRsYVpfSUwtbTNVbVN3TGN0cUlyTHlWckJVNVZSWGdJR2QyZm5ITUtHVDl6ejhEaDRIRzJ0cjU1bVBuMUFsU3RRcTZ0Z2h6UlB6d240NDRzYXVXZjlqbWJsT0xvcmJp?oc=5" target="_blank" rel="noopener noreferrer">US USTR Signals Possible Reimposition of 10% Universal Tariff - Seoul Economic Daily</a> — 关税重启迹象明确，具体时间待观察 <span class="fresh">新</span></span>
         
       </div>
       
