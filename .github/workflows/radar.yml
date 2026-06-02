@@ -1,7 +1,8 @@
 name: radar
 on:
   schedule:
-    - cron: "*/30 * * * *"   # 每 30 分钟
+    # 每 15 分钟（对冲 GitHub 免费层 scheduled 的延迟/跳过；X 仍由 4h 节流独立限频，成本不变）
+    - cron: "*/15 * * * *"
   workflow_dispatch: {}        # 也支持手动触发
 
 permissions:
@@ -30,6 +31,7 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           CONGRESS_API_KEY: ${{ secrets.CONGRESS_API_KEY }}
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+          TWITTERAPI_KEY: ${{ secrets.TWITTERAPI_KEY }}
 
       - name: commit dashboard + state
         run: |
