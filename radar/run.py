@@ -19,7 +19,9 @@ def run() -> int:
     from radar.notify import notify_new
     from radar.render import render
     from radar.score import score_items, summarize_daily
-    from radar.store import connect, get_meta, load_items, set_meta, upsert_items
+    from radar.store import (
+        connect, delete_items, get_meta, load_items, mark_seen, set_meta, upsert_items,
+    )
 
     conn = connect()
 
@@ -38,8 +40,15 @@ def run() -> int:
             score_items(new)
         except Exception as e:  # noqa: BLE001
             log.error("打分整体失败：%s", e)
+        kept = [it for it in new if it.get("signal") != "drop"]
+        dropped = [it for it in new if it.get("signal") == "drop"]
         try:
-            upsert_items(conn, new)
+            upsert_items(conn, kept)
+            if dropped:
+                # 噪音：不入库展示；删掉可能已存的旧版本，但标记 seen 避免重复打分
+                delete_items(conn, [it["id"] for it in dropped])
+                mark_seen(conn, [it["id"] for it in dropped])
+                log.info("丢弃噪音 %d 条（真人源无政策实质）", len(dropped))
         except Exception as e:  # noqa: BLE001
             log.error("入库失败：%s", e)
 

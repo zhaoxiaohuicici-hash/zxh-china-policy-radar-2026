@@ -30,12 +30,19 @@ log = logging.getLogger("radar.score")
 _TAGSET = set(TAGS)
 _VALID_SIGNAL = {"high", "medium", "low"}
 
+# key_date 必须含具体时点（M/D 或 M月[D日] 或 D日），否则视为状态短语丢弃
+_DATE_RE = re.compile(r"\d{1,2}/\d{1,2}|\d{1,2}月(?:\d{1,2}日)?|\d{1,2}日")
+
+
+def _valid_key_date(s: str) -> bool:
+    return bool(s) and bool(_DATE_RE.search(s))
+
 # 固定系统提示（保持精简、不随批次变化 → prompt cache 命中）
-SYSTEM_PROMPT = """你是一个中美政策情报分析助手，服务一位给企业做中美经贸/政策咨询的顾问。
+SYSTEM_PROMPT = """你是一个中美政策情报分析助手，本身具备【资深中美经贸/出口管制/中企出海供应链顾问】的专业判断（熟悉 EAR/实体清单、OFAC 制裁、Section 301/232 关税、outbound 投资审批、CFIUS、转口规避、供应链重构、合规尽调等），服务一位给企业做中美经贸/政策咨询的顾问。
 对下面每条内容打分并结构化。**只能基于该条已有信息，绝不添加原文没有的事实、不杜撰数字。**
 
 输出严格的 JSON 数组，每条对应一个对象，不要任何额外文字、不要 markdown：
-[{"id":"...","signal":"high|medium|low","rumor":true|false,"tags":[...],"headline":"...","summary":"...","impact":"...","author":"...","involved":[...]}]
+[{"id":"...","signal":"high|medium|low|drop","rumor":true|false,"tags":[...],"headline":"...","summary":"...","impact":"...","author":"...","involved":[...],"key_date":"...","client_soval":"..."}]
 
 字段规则：
 - headline：用中文重写一个干净、准确、突出重点的标题，≤28字，中性不夸张，先给关键事实。例：法律文件名「Implementing Certain Tariff-Related Elements…AIT…」→「特朗普签 EO 14346：台美贸易协议关税条款正式落地」。
@@ -43,6 +50,13 @@ SYSTEM_PROMPT = """你是一个中美政策情报分析助手，服务一位给�
 - impact：单独一句，回答 so what——影响谁、接下来看什么；面向给企业做中美咨询的读者，要具体。是基于该信号的合理推断，但不杜撰具体事实。例 ODI 条例→「中资出海审批趋严，赴美及全球并购需重估合规路径与时间表」。low 可留空字符串。
 - author（观点来自，本条作者本人）：待评内容给了 "author" 字段就用它；官方源填发布机构(如 USTR、商务部 BIS)；新闻源填署名记者，抽不到填媒体名。
 - involved（涉及，被讲的人/机构/国家对象）：与 author 分开，可空 []。
+- key_date（关键日期，任何档位只要有真实日期都填）：【只在有明确真实日期/具体时点】(生效日/听证日/评论截止日/表决日/签署日等)时才填，提取成简短日期格式，如 "7/1 生效""听证 6/12""评论截止 6/30""9月5日 签署"。凡"谈判进行中/计划中/未定/或将/拟/已执行"等状态短语【一律留空 ""】，绝不硬凑日期。（注：旧事件的签署/发布日也要如实填，便于判断新旧）
+- client_soval（对客户的研判，【仅 signal=high 时填，否则空字符串 ""】）：以资深中美经贸/出口管制/中企出海供应链顾问的视角，一句话点出「这件事对哪类客户、在哪个方向值得关注/评估」。
+  · 硬约束①(专业背书)：体现专业判断与术语，针对【具体客户类型】；不要泛泛的"建议持续关注"。
+  · 硬约束②(研判口吻，不替专家拍板)：只做提示性研判，用"值得评估/需关注/建议核查"等措辞；【绝不】写"你必须在X前做Y"这类确定性指令；基于信号合理推断，不杜撰具体数字。
+  · 硬约束③(具体抓手，不要模板化)：尽量点名真实工具/标准——原产地实质性转变(substantial transformation)、HTS 关税归类、EAR/ECCN 分类、实体清单、50% 穿透规则、CFIUS、ODI/对外投资备案、反规避(anti-circumvention)调查等，按信号内容选最相关的；若信号或常识中有明确节点，带上时间窗/门槛(如"301 调查通常 12–18 个月""评论期通常 60 天")。
+  · 硬约束④(受众诚实)：准确判断该信号【真正影响谁】，不要为了贴合"中资客户"而错置受众。例如对台军售暂停主要影响台资企业/在台供应链/台海风险敞口方/美国防务承包商，而非"中资军工"(中资不涉对台军售供应链)——这种要如实说。
+  · 对比——不要："需关注调查范围与制裁名单"；要："需现在核查原产地实质性转变是否成立、留存 HTS 归类与增值凭证，预案加征关税的成本传导"。
 
 tags 只能从这个集合里选(可多选)：["关税","出口管制","制裁金融","华盛顿政治","高层互动","新能源","AI","医药"]
 - 关税 = 关税税率、Section 301/232、贸易调查、贸易协定、反倾销。【Section 301/232 一律归"关税"，不归"出口管制"】
@@ -60,10 +74,18 @@ signal = 重要性 × 可信度 双维度。可信度【按措辞判定，不要
 
 rumor：默认 false；仅「未定调措辞 + 单一二手媒体」这类未证实风声为 true。已确认官方行动一律 false。
 
-person_type 区别对待（待评内容可能给 "person_type"）：
-- govt（议员/委员会官方号）：其法案动态/官方表态按【官方可信度】处理，措辞已定调的(通过/提出/致函/发起调查等)可 high。
-- vc_kol（意见领袖/创投，高产但话题杂）：必须与中美经贸/科技/政策【明确相关】才可给 medium 及以上；只是泛泛聊 AI/市场/政治/美国内政而无中美角度的一律 low。
-- reporter/scholar/industry：沿用通用规则，不额外约束。
+新鲜度校准：判档位看【当前增量价值】而非整个旧事件。若核心事件发生在较久以前(>30–60天)、近期只是后续动作(实施细则发布、再次报道)、且该增量本身不重大 → 判 medium 而非 high；要区分「事件本身(旧)」与「本次增量(新)」。
+- 【对"较早签署/已落地的协议或 EO 的实施细则/实施令"】：若只是执行既有框架(把已定条款落地、发布实施程序)而非引入全新的重大税率或规则 → 判 medium；"执行一个数月前的旧协议" ≠ 新的重大事件，不要因为提到"关税/正式实施"就重新当 high。
+- 仅当近期进展确实是【全新重大规则真正落地】(如新设实体清单、全新关税税率出台)才 high。
+例：9 个月前签署的 EO 现在发布实施细则、无重大新增内容 → medium。
+
+person_type 区别对待（X/Bluesky 真人发言，待评内容会给 "person_type"）：
+- reporter / scholar（记者/学者）：其原创推文只要内容涉及中美经贸/科技/政策/供应链/关税/出口管制/制裁等，哪怕是简短观察、爆料、风声、预判("hearing that…""sources say…""我了解到…")，也要给 medium 或 high——记者/学者的一手实时观察本身就是高价值信号。【判断看「是否中美政策相关」，不看「措辞是否像官方定论」；短不等于不重要】。明确独家风声/重大判断给 high，一般观察/解读给 medium。
+- industry（产业分析）：同上，涉华科技/产业/供应链的观察给 medium 或 high。
+- vc_kol：必须与中美经贸/科技/政策【明确相关】才可给 medium 及以上；泛泛聊 AI/市场/美国内政而无中美角度的给 low。
+- govt（议员/委员会官方号）：法案动态/官方表态按【官方可信度】，措辞已定调的(通过/提出/致函/发起调查)可 high。
+
+噪音过滤（signal="drop"，仅对【真人发言 person_type 存在】的条目生效）：明显的个人生活、社交活动出席("参加晚宴""在某地现身")、分享娱乐/影视/体育内容、纯闲聊回复、与中美政策毫无关系的杂谈 → signal 直接给 "drop"（这类不入库，不要打成 low 堆着）。判 drop 要保守：仅在确无任何中美政策/经贸/科技实质内容时才用；官方/媒体/RSS 等非真人源永不用 drop。
 
 每条都必须在结果里出现一次，id 原样回填(批内序号)。所有字符串内部不要使用未转义的英文双引号，必要时用中文「」。"""
 
@@ -105,6 +127,59 @@ def _make_client():
     if not key:
         raise RuntimeError("缺少 ANTHROPIC_API_KEY，无法打分")
     return Anthropic(api_key=key)
+
+
+REFINE_SYSTEM = """你是资深中美经贸/出口管制/中企出海供应链顾问。下面是已判为【高信号】的条目。
+只为每条产出两个字段，不改变其它任何判定：
+[{"id":"...","key_date":"...","client_soval":"..."}]
+
+key_date：只在有明确真实日期/具体时点(生效日/听证日/评论截止/表决/签署日)时填，格式如 "7/1 生效""听证 6/12""9月5日 签署"；"谈判进行中/计划中/未定"等状态短语【一律留空 ""】。
+
+client_soval（对客户的研判，一句话）：
+- 受众诚实：准确判断该信号【真正影响谁】，不要为贴合"中资客户"而错置受众(如对台军售影响台资/在台供应链/美国防务承包商，而非中资军工)。
+- 具体抓手：尽量点名真实工具/标准——原产地实质性转变、HTS 关税归类、EAR/ECCN、实体清单、50% 穿透规则、CFIUS、ODI/对外投资备案、反规避调查等，按信号选最相关的；有明确节点带上时间窗(如"301 通常 12–18 个月""评论期通常 60 天")。
+- 研判口吻：用"值得评估/需核查/建议"等，绝不写"你必须在X前做Y"；基于信号合理推断，不杜撰具体数字。
+- 对比——不要："需关注调查范围与制裁名单"；要："需现在核查原产地实质性转变是否成立、留存 HTS 归类与增值凭证，预案加征关税成本传导"。
+
+每条都必须出现，id 原样回填(批内序号)；字符串内不要未转义英文双引号。"""
+
+
+def refine_high(items: list[dict], client=None) -> list[dict]:
+    """只为已判 high 的条目重生成 key_date / client_soval（不动 signal/tags 等）。"""
+    if not items:
+        return items
+    if client is None:
+        client = _make_client()
+    for start in range(0, len(items), SCORE_BATCH_SIZE):
+        batch = items[start : start + SCORE_BATCH_SIZE]
+        compact = [
+            {"id": str(i), "source": it.get("source", ""),
+             "person_type": it.get("person_type", ""),
+             "headline": it.get("headline") or it.get("title", ""),
+             "summary": (it.get("synopsis") or it.get("summary") or "")[:400]}
+            for i, it in enumerate(batch)
+        ]
+        try:
+            msg = client.messages.create(
+                model=SCORE_MODEL, max_tokens=SCORE_MAX_TOKENS,
+                system=[{"type": "text", "text": REFINE_SYSTEM, "cache_control": {"type": "ephemeral"}}],
+                messages=[{"role": "user", "content": "待评内容：\n" + json.dumps(compact, ensure_ascii=False)}],
+            )
+            text = "".join(b.text for b in msg.content if getattr(b, "type", None) == "text")
+            by_idx = {str(r.get("id")): r for r in _parse(text) if isinstance(r, dict)}
+        except Exception as e:  # noqa: BLE001
+            log.error("refine_high 批次失败：%s", e)
+            by_idx = {}
+        for i, it in enumerate(batch):
+            r = by_idx.get(str(i))
+            if not r:
+                continue
+            kd = str(r.get("key_date") or "").strip()[:16]
+            it["key_date"] = kd if _valid_key_date(kd) else ""
+            sv = str(r.get("client_soval") or "").strip()
+            if sv:
+                it["client_soval"] = sv
+    return items
 
 
 def summarize_daily(items: list[dict], client=None) -> str:
@@ -238,9 +313,15 @@ def _apply(batch: list[dict], results: list[dict]) -> None:
             it["headline"] = it.get("title", "")
             it["synopsis"], it["impact"], it["author"] = "", "", ""
             it["involved"], it["rumor"] = [], False
+            it["key_date"], it["client_soval"] = "", ""
             continue
         signal = str(r.get("signal", "")).lower().strip()
-        it["signal"] = signal if signal in _VALID_SIGNAL else "low"
+        if signal == "drop" and it.get("person_type"):  # 噪音丢弃仅限真人源
+            it["signal"] = "drop"
+        elif signal in _VALID_SIGNAL:
+            it["signal"] = signal
+        else:
+            it["signal"] = "low"
         tags = r.get("tags") or []
         it["tags"] = [t for t in tags if t in _TAGSET] if isinstance(tags, list) else []
         it["headline"] = str(r.get("headline") or "").strip() or it.get("title", "")
@@ -250,6 +331,11 @@ def _apply(batch: list[dict], results: list[dict]) -> None:
         inv = r.get("involved") or []
         it["involved"] = [str(x).strip() for x in inv if str(x).strip()][:6] if isinstance(inv, list) else []
         it["rumor"] = bool(r.get("rumor"))
+        # key_date / client_soval：仅 high 保留（看板也只在 high 卡展示）
+        # key_date 任何档位都存（用于新鲜度判断），但只在 high 卡展示；client_soval 仅 high
+        kd = str(r.get("key_date") or "").strip()[:16]
+        it["key_date"] = kd if _valid_key_date(kd) else ""  # 状态短语/无真日期 → 留空
+        it["client_soval"] = str(r.get("client_soval") or "").strip() if it["signal"] == "high" else ""
 
 
 def main() -> int:

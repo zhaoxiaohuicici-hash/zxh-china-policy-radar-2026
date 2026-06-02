@@ -40,10 +40,11 @@ def fetch_bluesky(cfg: dict) -> list[dict]:
     for acc in accounts:
         name = acc.get("name", "?")
         handle = acc.get("handle") or acc.get("did")
+        ptype = acc.get("person_type", "")
         if not handle:
             continue
         try:
-            got = _fetch_one(name, handle, lookback, max_per, drop_reposts, drop_replies)
+            got = _fetch_one(name, handle, lookback, max_per, drop_reposts, drop_replies, ptype)
             items.extend(got)
             log.info("bluesky/%-22s %2d 条", name, len(got))
         except Exception as e:  # noqa: BLE001 — 单账号失败不连累其他
@@ -51,7 +52,7 @@ def fetch_bluesky(cfg: dict) -> list[dict]:
     return items
 
 
-def _fetch_one(name, handle, lookback, max_per, drop_reposts, drop_replies) -> list[dict]:
+def _fetch_one(name, handle, lookback, max_per, drop_reposts, drop_replies, ptype="") -> list[dict]:
     params = {
         "actor": handle,
         "limit": 30,  # 多取些再按时间窗/过滤裁剪
@@ -91,6 +92,7 @@ def _fetch_one(name, handle, lookback, max_per, drop_reposts, drop_replies) -> l
             published=created,
         )
         it["author"] = name             # 预置作者，打分时作为 hint 并兜底
+        it["person_type"] = ptype       # 供「人在说什么」板块分类 + 打分降噪
         out.append(it)
         if len(out) >= max_per:
             break

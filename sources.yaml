@@ -101,20 +101,20 @@ bluesky:
   max_per_account: 8
   drop_reposts: true      # 过滤转发
   drop_replies: false     # 回复常含观点，默认保留
-  accounts:
-    - { name: Ana Swanson,       handle: anaswanson.bsky.social }   # NYT 贸易
-    - { name: Lingling Wei,      handle: lingling-wei.bsky.social } # WSJ 首席中国
-    - { name: Scott Kennedy,     handle: kennedychina.bsky.social } # CSIS
-    - { name: Jordan Schneider,  handle: jordanschneider.bsky.social } # ChinaTalk
-    - { name: Bill Bishop,       handle: billbishop.bsky.social }   # Sinocism
-    - { name: Adam Tooze,        handle: adamtooze.bsky.social }    # Chartbook
-    - { name: Chad Bown,         handle: chadpbown.com }            # PIIE
-    - { name: Martin Chorzempa,  handle: chorzempa.bsky.social }    # PIIE
-    - { name: Rush Doshi,        handle: rushdoshi.bsky.social }    # CFR/Georgetown
-    - { name: Bonnie Glaser,     handle: bglaser.bsky.social }      # GMF
-    - { name: Ilaria Mazzocco,   handle: ilariamazzocco.bsky.social } # CSIS 清洁技术
-    - { name: Graham Webster,    handle: gwbstr.com }               # Stanford DigiChina
-    - { name: Helen Toner,       handle: hlntnr.bsky.social }       # Georgetown CSET
+  accounts:                              # person_type 供「人在说什么」板块分类
+    - { name: Ana Swanson,       person_type: reporter, handle: anaswanson.bsky.social }
+    - { name: Lingling Wei,      person_type: reporter, handle: lingling-wei.bsky.social }
+    - { name: Scott Kennedy,     person_type: scholar,  handle: kennedychina.bsky.social }
+    - { name: Jordan Schneider,  person_type: scholar,  handle: jordanschneider.bsky.social }
+    - { name: Bill Bishop,       person_type: scholar,  handle: billbishop.bsky.social }
+    - { name: Adam Tooze,        person_type: scholar,  handle: adamtooze.bsky.social }
+    - { name: Chad Bown,         person_type: scholar,  handle: chadpbown.com }
+    - { name: Martin Chorzempa,  person_type: scholar,  handle: chorzempa.bsky.social }
+    - { name: Rush Doshi,        person_type: scholar,  handle: rushdoshi.bsky.social }
+    - { name: Bonnie Glaser,     person_type: scholar,  handle: bglaser.bsky.social }
+    - { name: Ilaria Mazzocco,   person_type: scholar,  handle: ilariamazzocco.bsky.social }
+    - { name: Graham Webster,    person_type: scholar,  handle: gwbstr.com }
+    - { name: Helen Toner,       person_type: scholar,  handle: hlntnr.bsky.social }
 
 # ── 第三层：X（via TwitterAPI.io，鉴权用 .env 的 TWITTERAPI_KEY）────
 # handle 为【候选】，由 resolve 脚本逐个 /twitter/user/info 核实后回填 user_id；

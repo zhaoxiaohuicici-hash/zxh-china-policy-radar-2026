@@ -55,6 +55,9 @@ def make_item(
         "author": "",     # 观点来自：本条作者/发布机构/署名记者
         "involved": [],   # 涉及：被讲的人/机构/国家
         "rumor": False,   # 未证实/未定调传闻
+        "person_type": "",  # reporter/scholar/vc_kol/govt/industry（仅 layer3 真人源）
+        "key_date": "",     # 关键时间节点（仅 high 显示）
+        "client_soval": "", # 对客户的研判（仅 high 显示）
         "why": "",        # 一句话理由（保留兼容）
     }
 

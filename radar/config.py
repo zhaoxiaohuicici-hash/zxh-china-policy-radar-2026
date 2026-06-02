@@ -91,6 +91,69 @@ SOURCE_AUTHORS = {
     "Rhodium": "Rhodium Group",
 }
 
+# ── 人物头衔/机构（看板「人在说什么」板块展示，按 source=本人名 匹配）──
+# 来源：解析账号时核实的 bio。覆盖全部 X(33) + Bluesky 活跃账号；缺的按
+# person_type 兜底（见 person_title）。
+PERSON_TITLES = {
+    # reporter
+    "Demetri Sevastopulo": "金融时报 美中记者",
+    "Lingling Wei": "华尔街日报 首席中国记者",
+    "Jenny Leonard": "彭博社 经济治国记者",
+    "Ana Swanson": "纽约时报 贸易记者",
+    "Keith Bradsher": "纽约时报 北京分社",
+    "Alexandra Alper": "路透社 白宫/中国科技",
+    "Edward Wong": "纽约时报 外交记者",
+    "Bob Davis": "资深贸易记者(前华尔街日报)",
+    "Phelim Kine": "Politico 外交记者",
+    "Gavin Bade": "华尔街日报 贸易记者",
+    "Eunice Yoon": "CNBC 北京分社",
+    "Kana Inagaki": "金融时报 记者",
+    "Eva Dou": "华盛顿邮报 科技记者",
+    "Jeff Stein": "SpyTalk 创始编辑(国安/情报)",
+    "Annmarie Hordern": "彭博电视 首席政治记者",
+    # scholar
+    "Brad Setser": "CFR 高级研究员",
+    "Gregory Allen": "CSIS Wadhwani AI 中心",
+    "Scott Kennedy": "CSIS 中国商业/经济",
+    "Paul Triolo": "DGA-Albright 科技政策",
+    "Chris Miller": "《芯片战争》作者/塔夫茨教授",
+    "Rush Doshi": "CFR 中国战略/乔治城",
+    "Bonnie Glaser": "GMF 印太项目主任",
+    "Martin Chorzempa": "PIIE 高级研究员",
+    "Dan Wang": "胡佛研究所/《Breakneck》作者",
+    # vc_kol
+    "Chamath Palihapitiya": "Social Capital 创始人",
+    "David Sacks": "白宫 AI 与加密事务主管",
+    "Jason Calacanis": "天使投资人/All-In 播客",
+    "Balaji Srinivasan": "投资人/前 Coinbase CTO",
+    "Bill Gurley": "Benchmark 风投",
+    "Ben Thompson": "Stratechery 作者",
+    # govt
+    "John Moolenaar": "众议院对华特别委员会主席",
+    # industry
+    "Dylan Patel": "SemiAnalysis 创始人",
+    "Kyle Chan": "布鲁金斯研究员",
+    # Bluesky 独有（不在 X 名单）
+    "Jordan Schneider": "ChinaTalk 主理人",
+    "Bill Bishop": "Sinocism 主理人",
+    "Adam Tooze": "哥伦比亚大学教授/Chartbook",
+    "Chad Bown": "PIIE 高级研究员",
+    "Ilaria Mazzocco": "CSIS 中国清洁技术",
+    "Graham Webster": "斯坦福 DigiChina",
+    "Helen Toner": "乔治城 CSET",
+}
+
+_PTYPE_FALLBACK = {
+    "reporter": "记者", "scholar": "分析师", "vc_kol": "投资人",
+    "industry": "产业分析", "govt": "官员",
+}
+
+
+def person_title(name: str, person_type: str = "") -> str:
+    """取人物头衔；缺映射时按 person_type 兜底。"""
+    return PERSON_TITLES.get(name) or _PTYPE_FALLBACK.get(person_type, "分析师")
+
+
 # ── 来源类型分类（看板用）：官方 gov / 观点 view / 媒体 media ────
 # media = 经 Google News 代理的官方机构与智库源（标题党/二手报道）。
 # 其余 RSS（Substack/播客/博客/Rhodium 原生）= 观点；FR/Congress = 官方。

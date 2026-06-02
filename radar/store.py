@@ -50,6 +50,7 @@ def init_db(conn: sqlite3.Connection) -> None:
             author       TEXT,   -- 观点来自
             involved     TEXT,   -- JSON 数组：涉及的人与机构
             rumor        INTEGER,-- 0/1 未证实
+            person_type  TEXT,   -- reporter/scholar/vc_kol/govt/industry（layer3 真人）
             why          TEXT,
             scored_at    TEXT
         );
@@ -70,7 +71,19 @@ def init_db(conn: sqlite3.Connection) -> None:
         "synopsis": "TEXT", "involved": "TEXT",
         "headline": "TEXT", "impact": "TEXT", "author": "TEXT", "rumor": "INTEGER",
         "pushed": "INTEGER",  # 1=已 ntfy 推送，避免重复轰炸
+        "person_type": "TEXT",
+        "key_date": "TEXT", "client_soval": "TEXT",
     })
+    conn.commit()
+
+
+def delete_items(conn: sqlite3.Connection, ids: list[str]) -> None:
+    """从 items 删除（用于把已落库的噪音条目清掉；不动 seen 以免重复打分）。"""
+    if not ids:
+        return
+    for i in range(0, len(ids), 500):
+        chunk = ids[i : i + 500]
+        conn.execute(f"DELETE FROM items WHERE id IN ({','.join('?' * len(chunk))})", chunk)
     conn.commit()
 
 
@@ -149,6 +162,9 @@ def upsert_items(conn: sqlite3.Connection, items: list[dict]) -> None:
             it.get("author") or "",
             json.dumps(it.get("involved") or [], ensure_ascii=False),
             1 if it.get("rumor") else 0,
+            it.get("person_type") or "",
+            it.get("key_date") or "",
+            it.get("client_soval") or "",
             it.get("why"),
             now,
         )
@@ -158,8 +174,9 @@ def upsert_items(conn: sqlite3.Connection, items: list[dict]) -> None:
         """
         INSERT OR REPLACE INTO items
           (id, source, source_layer, title, summary, url, published,
-           signal, tags, headline, synopsis, impact, author, involved, rumor, why, scored_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+           signal, tags, headline, synopsis, impact, author, involved, rumor, person_type,
+           key_date, client_soval, why, scored_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         rows,
     )
