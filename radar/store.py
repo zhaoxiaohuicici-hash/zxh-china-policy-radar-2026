@@ -72,7 +72,7 @@ def init_db(conn: sqlite3.Connection) -> None:
         "headline": "TEXT", "impact": "TEXT", "author": "TEXT", "rumor": "INTEGER",
         "pushed": "INTEGER",  # 1=已 ntfy 推送，避免重复轰炸
         "person_type": "TEXT",
-        "key_date": "TEXT", "client_soval": "TEXT",
+        "key_date": "TEXT", "client_soval": "TEXT", "chip_label": "TEXT",
     })
     conn.commit()
 
@@ -165,6 +165,7 @@ def upsert_items(conn: sqlite3.Connection, items: list[dict]) -> None:
             it.get("person_type") or "",
             it.get("key_date") or "",
             it.get("client_soval") or "",
+            it.get("chip_label") or "",
             it.get("why"),
             now,
         )
@@ -175,8 +176,8 @@ def upsert_items(conn: sqlite3.Connection, items: list[dict]) -> None:
         INSERT OR REPLACE INTO items
           (id, source, source_layer, title, summary, url, published,
            signal, tags, headline, synopsis, impact, author, involved, rumor, person_type,
-           key_date, client_soval, why, scored_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+           key_date, client_soval, chip_label, why, scored_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         rows,
     )

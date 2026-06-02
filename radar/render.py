@@ -84,8 +84,12 @@ def render(conn=None) -> str:
         # 锚点 id：给所有"全卡"分配（机构 high/medium + 人物 high/medium）
         for n, it in enumerate(high + medium + people_high + people_med):
             it["_aid"] = f"sig-{n}"
-        # 今日主线下钻 chips → 机构高信号卡
-        thread_anchors = [{"aid": it["_aid"], "label": (it["_headline"] or "")[:16]} for it in high][:6]
+        # 今日主线下钻 chips → 机构高信号卡。label 用打分生成的 chip_label(完整短句)，
+        # 缺失时回退到标题首句/截断（仅兜底，正常都有 chip_label）
+        thread_anchors = [
+            {"aid": it["_aid"], "label": (it.get("chip_label") or "").strip() or _short_label(it["_headline"])}
+            for it in high
+        ][:6]
 
         # 📅 未来看点：扫描【所有档位】的 key_date，挑出未来日期，按时间近→远
         watch = []
@@ -189,6 +193,16 @@ def _event_date(key_date: str | None, now: datetime) -> datetime | None:
     if (cand - now).days > 45:           # 不合理的远未来 → 实为去年的过去事件
         cand = cand.replace(year=now.year - 1)
     return cand
+
+
+def _short_label(headline: str) -> str:
+    """chip_label 缺失时的兜底：取标题第一个自然短句(到标点为止)，仍不硬切词。"""
+    h = (headline or "").strip()
+    for sep in ("：", ":", "，", ",", "、", "—", "·"):
+        i = h.find(sep)
+        if 4 <= i <= 16:
+            return h[:i]
+    return h if len(h) <= 16 else h[:14] + "…"
 
 
 def _parse(iso: str | None) -> datetime | None:

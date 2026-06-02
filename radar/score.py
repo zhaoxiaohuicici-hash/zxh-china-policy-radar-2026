@@ -42,7 +42,7 @@ SYSTEM_PROMPT = """你是一个中美政策情报分析助手，本身具备【�
 对下面每条内容打分并结构化。**只能基于该条已有信息，绝不添加原文没有的事实、不杜撰数字。**
 
 输出严格的 JSON 数组，每条对应一个对象，不要任何额外文字、不要 markdown：
-[{"id":"...","signal":"high|medium|low|drop","rumor":true|false,"tags":[...],"headline":"...","summary":"...","impact":"...","author":"...","involved":[...],"key_date":"...","client_soval":"..."}]
+[{"id":"...","signal":"high|medium|low|drop","rumor":true|false,"tags":[...],"headline":"...","summary":"...","impact":"...","author":"...","involved":[...],"key_date":"...","client_soval":"...","chip_label":"..."}]
 
 字段规则：
 - headline：用中文重写一个干净、准确、突出重点的标题，≤28字，中性不夸张，先给关键事实。例：法律文件名「Implementing Certain Tariff-Related Elements…AIT…」→「特朗普签 EO 14346：台美贸易协议关税条款正式落地」。
@@ -50,6 +50,7 @@ SYSTEM_PROMPT = """你是一个中美政策情报分析助手，本身具备【�
 - impact：单独一句，回答 so what——影响谁、接下来看什么；面向给企业做中美咨询的读者，要具体。是基于该信号的合理推断，但不杜撰具体事实。例 ODI 条例→「中资出海审批趋严，赴美及全球并购需重估合规路径与时间表」。low 可留空字符串。
 - author（观点来自，本条作者本人）：待评内容给了 "author" 字段就用它；官方源填发布机构(如 USTR、商务部 BIS)；新闻源填署名记者，抽不到填媒体名。
 - involved（涉及，被讲的人/机构/国家对象）：与 author 分开，可空 []。
+- chip_label（仅 signal=high 时填，否则空字符串 ""）：一句话浓缩该信号的「主体+动作」，用于看板顶部跳转胶囊。约 10–14 字为宜，但【完整性优先于字数】：宁可略超也要完整、能独立读懂，【绝不切词、不砍关键词】(如 Section 301、50%、7 月、实体清单 等关键信息不能省)，含英文/数字术语整体算。示例风格："ODI 新规 7 月生效""美对越南 301 调查""台美关税协议生效""中国限 AI 企业接受美资"。不要砍成不知所云的关键词，也不要照搬长标题。
 - key_date（关键日期，任何档位只要有真实日期都填）：【只在有明确真实日期/具体时点】(生效日/听证日/评论截止日/表决日/签署日等)时才填，提取成简短日期格式，如 "7/1 生效""听证 6/12""评论截止 6/30""9月5日 签署"。凡"谈判进行中/计划中/未定/或将/拟/已执行"等状态短语【一律留空 ""】，绝不硬凑日期。（注：旧事件的签署/发布日也要如实填，便于判断新旧）
 - client_soval（对客户的研判，【仅 signal=high 时填，否则空字符串 ""】）：以资深中美经贸/出口管制/中企出海供应链顾问的视角，一句话点出「这件事对哪类客户、在哪个方向值得关注/评估」。
   · 硬约束①(专业背书)：体现专业判断与术语，针对【具体客户类型】；不要泛泛的"建议持续关注"。
@@ -130,8 +131,10 @@ def _make_client():
 
 
 REFINE_SYSTEM = """你是资深中美经贸/出口管制/中企出海供应链顾问。下面是已判为【高信号】的条目。
-只为每条产出两个字段，不改变其它任何判定：
-[{"id":"...","key_date":"...","client_soval":"..."}]
+只为每条产出三个字段，不改变其它任何判定：
+[{"id":"...","key_date":"...","client_soval":"...","chip_label":"..."}]
+
+chip_label：一句话浓缩该信号的「主体+动作」，用于看板顶部跳转胶囊。要【完整语义、能独立读懂、不截断、不切词】，约 10–14 字、≤14 字。示例风格："ODI 新规 7 月生效""美对越南 301 调查""台美关税协议生效""中国限 AI 企业接受美资"。不要砍成不知所云的关键词，也不要照搬长标题。
 
 key_date：只在有明确真实日期/具体时点(生效日/听证日/评论截止/表决/签署日)时填，格式如 "7/1 生效""听证 6/12""9月5日 签署"；"谈判进行中/计划中/未定"等状态短语【一律留空 ""】。
 
@@ -179,6 +182,9 @@ def refine_high(items: list[dict], client=None) -> list[dict]:
             sv = str(r.get("client_soval") or "").strip()
             if sv:
                 it["client_soval"] = sv
+            cl = str(r.get("chip_label") or "").strip()[:40]
+            if cl:
+                it["chip_label"] = cl
     return items
 
 
@@ -313,7 +319,7 @@ def _apply(batch: list[dict], results: list[dict]) -> None:
             it["headline"] = it.get("title", "")
             it["synopsis"], it["impact"], it["author"] = "", "", ""
             it["involved"], it["rumor"] = [], False
-            it["key_date"], it["client_soval"] = "", ""
+            it["key_date"], it["client_soval"], it["chip_label"] = "", "", ""
             continue
         signal = str(r.get("signal", "")).lower().strip()
         if signal == "drop" and it.get("person_type"):  # 噪音丢弃仅限真人源
@@ -332,10 +338,14 @@ def _apply(batch: list[dict], results: list[dict]) -> None:
         it["involved"] = [str(x).strip() for x in inv if str(x).strip()][:6] if isinstance(inv, list) else []
         it["rumor"] = bool(r.get("rumor"))
         # key_date / client_soval：仅 high 保留（看板也只在 high 卡展示）
-        # key_date 任何档位都存（用于新鲜度判断），但只在 high 卡展示；client_soval 仅 high
+        # key_date 任何档位都存（用于新鲜度判断），但只在 high 卡展示；client_soval/chip_label 仅 high
         kd = str(r.get("key_date") or "").strip()[:16]
         it["key_date"] = kd if _valid_key_date(kd) else ""  # 状态短语/无真日期 → 留空
-        it["client_soval"] = str(r.get("client_soval") or "").strip() if it["signal"] == "high" else ""
+        if it["signal"] == "high":
+            it["client_soval"] = str(r.get("client_soval") or "").strip()
+            it["chip_label"] = str(r.get("chip_label") or "").strip()[:40]  # 仅防御性上限，不裁剪正常短句
+        else:
+            it["client_soval"], it["chip_label"] = "", ""
 
 
 def main() -> int:

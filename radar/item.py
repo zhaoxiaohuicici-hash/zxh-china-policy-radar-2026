@@ -58,6 +58,7 @@ def make_item(
         "person_type": "",  # reporter/scholar/vc_kol/govt/industry（仅 layer3 真人源）
         "key_date": "",     # 关键时间节点（仅 high 显示）
         "client_soval": "", # 对客户的研判（仅 high 显示）
+        "chip_label": "",   # 今日主线跳转 chip 用的完整短句（主体+动作，≤14字）
         "why": "",        # 一句话理由（保留兼容）
     }
 
