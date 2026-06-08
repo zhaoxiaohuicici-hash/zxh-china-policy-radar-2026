@@ -1,9 +1,9 @@
 name: radar
 on:
-  schedule:
-    # 每 15 分钟（对冲 GitHub 免费层 scheduled 的延迟/跳过；X 仍由 4h 节流独立限频，成本不变）
-    - cron: "*/15 * * * *"
-  workflow_dispatch: {}        # 也支持手动触发
+  # 定时触发改由外部服务(cron-job.org)每 15 分钟调用 workflow_dispatch。
+  # 移除 GitHub 原生 schedule：它极不可靠，且与外部触发并存时会两轮几乎同时 push，
+  # 造成 non-fast-forward 失败（run #407 的真因）。单一触发源 + 下面的 push 重试 = 不再竞态。
+  workflow_dispatch: {}        # 外部触发 + 手动触发入口
 
 permissions:
   contents: write              # 允许提交生成的看板
@@ -39,5 +39,13 @@ jobs:
           git config user.email "bot@users.noreply.github.com"
           # docs/ = 看板；radar.db = 跨运行状态(去重/防重复推送/今日主线)
           git add docs/ radar.db
-          git commit -m "radar: update $(date -u +%FT%TZ)" || echo "no change"
-          git push
+          git commit -m "radar: update $(date -u +%FT%TZ)" || { echo "no change"; exit 0; }
+          # 竞态保险：push 被拒就整合远端再重试，最多 5 次。
+          # 用 merge -X ours：docs/radar.db 冲突时以本轮新生成的为准；远端的其它改动(如代码)正常并入。
+          for i in 1 2 3 4 5; do
+            if git push origin HEAD:main; then echo "pushed (第 $i 次)"; exit 0; fi
+            echo "push 被拒，第 $i 次：整合远端后重试…"
+            git fetch origin main
+            git merge -X ours --no-edit origin/main || true
+          done
+          echo "5 次重试仍失败"; exit 1
