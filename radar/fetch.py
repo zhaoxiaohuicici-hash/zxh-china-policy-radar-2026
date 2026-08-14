@@ -21,10 +21,11 @@ from radar.sources.x import fetch_x
 log = logging.getLogger("radar.fetch")
 
 
-def fetch_all(conn=None) -> list[dict]:
+def fetch_all(conn=None, alerts=None) -> list[dict]:
     """运行所有启用的源，返回去重（批内）后的 Item 列表。
 
     conn 用于 X 源的成本节流（meta.last_x_run）；为 None 时 X 不节流（独立测试用）。
+    alerts 为告警收集器（list）：X 遇 402 余额不足时 append "twitterapi_credit"。
     """
     cfg = load_sources()
     items: list[dict] = []
@@ -51,7 +52,7 @@ def fetch_all(conn=None) -> list[dict]:
     _run("bluesky", lambda: fetch_bluesky(cfg), items)
 
     # ③ X via TwitterAPI.io（带成本节流，需 conn 才生效）
-    _run("x", lambda: fetch_x(cfg, conn), items)
+    _run("x", lambda: fetch_x(cfg, conn, alerts), items)
 
     return _dedupe_batch(items)
 

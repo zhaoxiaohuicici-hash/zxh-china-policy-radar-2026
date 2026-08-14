@@ -34,6 +34,9 @@ jobs:
           TWITTERAPI_KEY: ${{ secrets.TWITTERAPI_KEY }}
 
       - name: commit dashboard + state
+        # always()：即使 run pipeline 因"余额不足"exit 1（本轮明确失败/发邮件），
+        # 也要提交 radar.db —— 否则告警去重时间戳(alert_*_at)丢失 → 每轮重复告警刷屏。
+        if: always()
         run: |
           git config user.name "radar-bot"
           git config user.email "bot@users.noreply.github.com"

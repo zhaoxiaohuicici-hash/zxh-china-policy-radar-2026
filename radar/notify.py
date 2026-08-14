@@ -44,6 +44,45 @@ def notify_new(conn, items: list[dict]) -> int:
     return sent
 
 
+def notify_alert(conn, key: str, title: str, body: str) -> bool:
+    """健康告警推送，按 ALERT_COOLDOWN_HOURS 去重（同类每 N 小时最多一条）。
+
+    返回 True=本次确实推了（冷却已过），False=冷却中跳过 / 无 topic / 推送失败。
+    run.py 用返回值决定是否 exit 1（失败邮件同样按此去重，不刷屏）。
+    """
+    from datetime import datetime, timezone
+
+    from radar.config import ALERT_COOLDOWN_HOURS
+    from radar.store import get_meta, set_meta
+
+    topic = env("NTFY_TOPIC")
+    if not topic:
+        log.warning("未设 NTFY_TOPIC，无法告警")
+        return False
+    now = datetime.now(timezone.utc)
+    last = get_meta(conn, f"alert_{key}_at")
+    if last:
+        try:
+            if (now - datetime.fromisoformat(last)).total_seconds() < ALERT_COOLDOWN_HOURS * 3600:
+                return False  # 冷却中
+        except Exception:
+            pass
+    payload = {
+        "topic": topic, "title": title, "message": body,
+        "priority": 5,  # max，比普通高信号推送(4)更醒目
+        "tags": ["rotating_light"],
+    }
+    try:
+        r = requests.post(NTFY_BASE, json=payload, headers={"User-Agent": USER_AGENT}, timeout=HTTP_TIMEOUT)
+        r.raise_for_status()
+        set_meta(conn, f"alert_{key}_at", now.isoformat())
+        log.warning("已推告警[%s]：%s", key, title)
+        return True
+    except Exception as e:  # noqa: BLE001
+        log.error("告警推送失败[%s]：%s", key, e)
+        return False
+
+
 def _post(topic: str, it: dict) -> bool:
     title = (it.get("headline") or it.get("title") or "中美政策雷达").strip()
     body = (it.get("impact") or it.get("synopsis") or "").strip() or title

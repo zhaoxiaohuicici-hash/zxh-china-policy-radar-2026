@@ -55,7 +55,7 @@ def resolve_user(handle: str) -> dict | None:
 
 
 # ── 抓取：流水线主入口 ─────────────────────────────────────────
-def fetch_x(cfg: dict, conn=None) -> list[dict]:
+def fetch_x(cfg: dict, conn=None, alerts=None) -> list[dict]:
     xc = cfg.get("x") or {}
     if not xc.get("enabled"):
         return []
@@ -96,6 +96,10 @@ def fetch_x(cfg: dict, conn=None) -> list[dict]:
             calls += n_calls
             log.info("x/%-22s %2d 条", name, len(got))
         except Exception as e:  # noqa: BLE001 — 单账号失败不连累其他
+            # 402 Payment Required = TwitterAPI.io 余额不足（核心功能挂），收进告警
+            if alerts is not None and getattr(getattr(e, "response", None), "status_code", None) == 402 \
+                    and "twitterapi_credit" not in alerts:
+                alerts.append("twitterapi_credit")
             log.error("x/%s 失败: %s", name, e)
     log.info("x 本轮调用 %d 次（≤名单人数），原创 %d 条", calls, len(items))
 

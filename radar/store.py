@@ -110,6 +110,19 @@ def get_meta(conn: sqlite3.Connection, key: str, default=None):
     return r[0] if r else default
 
 
+def meta_age_hours(conn: sqlite3.Connection, key: str):
+    """meta 某键距今更新了多少小时；不存在返回 None。"""
+    from datetime import datetime, timezone
+    r = conn.execute("SELECT updated_at FROM meta WHERE key=?", (key,)).fetchone()
+    if not r or not r[0]:
+        return None
+    try:
+        dt = datetime.fromisoformat(str(r[0]).replace("Z", "+00:00"))
+        return (datetime.now(timezone.utc) - dt).total_seconds() / 3600
+    except Exception:
+        return None
+
+
 def _ensure_columns(conn: sqlite3.Connection, table: str, cols: dict[str, str]) -> None:
     """为已存在的表补齐新列（老库平滑升级）。"""
     have = {r[1] for r in conn.execute(f"PRAGMA table_info({table})")}

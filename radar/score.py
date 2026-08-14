@@ -30,6 +30,19 @@ log = logging.getLogger("radar.score")
 _TAGSET = set(TAGS)
 _VALID_SIGNAL = {"high", "medium", "low"}
 
+
+class CreditError(Exception):
+    """付费 API 余额不足（Anthropic 400 credit balance too low）。
+
+    这类"核心功能挂了"必须冒泡到 run.py 触发告警 + 让本轮明确失败，
+    不能被当成普通单批错误吞掉。
+    """
+
+
+def _is_credit_error(e: Exception) -> bool:
+    m = str(e).lower()
+    return "credit balance" in m or "too low" in m or "billing" in m
+
 # key_date 必须含具体时点（M/D 或 M月[D日] 或 D日），否则视为状态短语丢弃
 _DATE_RE = re.compile(r"\d{1,2}/\d{1,2}|\d{1,2}月(?:\d{1,2}日)?|\d{1,2}日")
 
@@ -114,6 +127,9 @@ def score_items(items: list[dict], client=None) -> list[dict]:
             text = _call(client, batch)
             results = _parse(text)
         except Exception as e:  # noqa: BLE001 — 单批失败不连累其他批/其他流水线步骤
+            if _is_credit_error(e):
+                # 余额不足：后续批必然同样失败，直接冒泡到 run.py（告警+失败+不入库 junk）
+                raise CreditError(str(e)) from e
             log.error("打分批次 [%d:%d] 失败，整批标 low：%s", start, start + len(batch), e)
             results = []
         _apply(batch, results)
@@ -213,6 +229,8 @@ def summarize_daily(items: list[dict], client=None) -> str:
         )
         return "".join(b.text for b in msg.content if getattr(b, "type", None) == "text").strip()
     except Exception as e:  # noqa: BLE001 — 主线生成失败不应阻断 render
+        if _is_credit_error(e):
+            raise CreditError(str(e)) from e  # 余额不足冒泡到 run.py 告警
         log.error("今日主线生成失败：%s", e)
         return ""
 

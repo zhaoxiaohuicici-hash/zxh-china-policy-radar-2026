@@ -63,6 +63,11 @@ SCORE_MODEL = "claude-haiku-4-5-20251001"
 SCORE_BATCH_SIZE = 40
 SCORE_MAX_TOKENS = 8192
 
+# ── 健康告警（静默停更根治）──────────────────────────────────
+ALERT_COOLDOWN_HOURS = 6   # 同类告警(ntfy + 失败邮件)去重间隔：断供期每 6h 最多一次
+WATCHDOG_STALE_HOURS = 3   # 连续这么久没有一次成功打分 → 推"雷达可能停更"
+THREAD_STALE_HOURS = 4     # 今日主线超过这么久 → 即使无新条目也重算(停更恢复后自动刷新)
+
 # ── 标签集（规格「信号分与标签」那节，顺序即看板筛选器顺序）──────
 TAGS = [
     "关税",
